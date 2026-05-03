@@ -8,7 +8,7 @@ from pathlib import Path
 from peewee import *
 from src.custom_logging import setup_logger
 from src.g_db_settings_handler import SettingsHandler
-from src.a_db_ordner_handler import Bilder_daten_Handler
+from src.DBManager import FaceDB
 
 loger = setup_logger(__name__)
 
@@ -45,8 +45,8 @@ def start_select_folder(parent_widget):
         QApplication.processEvents()
     
         image_name = str(file_path).replace(folder_path+"/","")
-        bilder_db = Bilder_daten_Handler(db_path=db_path)
-        bilder_db.add_or_update_bild(name=image_name)
+        bilder_db = FaceDB(db_path=db_path)
+        bilder_db.add_image(file_name=image_name)
         #add_picture_names_to_db(picture_name=image_name,db_path=db_path)
         # Fortschritt aktualisieren
         progress_value = i + 1
@@ -76,7 +76,7 @@ def select_folder(parent_widget):
 def add_db_to_folder(folder_path):
     db_path = f"{folder_path}/db.db"
     try:
-        db = SqliteDatabase(db_path)
+        db = FaceDB(db_path)
         db.connect()
         loger.info(f"DB erstellt oder existiert schon im pfad {db_path}")
         db.close()
@@ -86,30 +86,6 @@ def add_db_to_folder(folder_path):
 
     return db_path
 
-def add_picture_names_to_db(picture_name,db_path):
-    db = SqliteDatabase(db_path)
-
-    class BaseModel(Model):
-        class Meta:
-            database = db
-
-    class Bilder_daten(BaseModel):
-        name = CharField(unique=True)
-
-    class Gesicht(BaseModel):
-        bild = ForeignKeyField(Bilder_daten, backref='gesichter')
-        embedding = BlobField()  # Binary für numpy array
-        bbox = CharField()       # Als String speichern "x1,y1,x2,y2"
-        alter = IntegerField()
-        geschlecht = IntegerField()
-    
-    # Tabelle erstellen (falls nicht existiert)
-    db.connect()
-    db.create_tables([Bilder_daten])
-    
-    # Daten einfügen
-    Bilder_daten.get_or_create(
-        name=picture_name)
 
     
 def start_show_images_from_folder_in_qlistwidget(list_widget,bilder_zum_anzeigen):
@@ -126,9 +102,9 @@ def start_show_images_from_folder_in_qlistwidget(list_widget,bilder_zum_anzeigen
     if not folder_path:
         loger.error("No Folder Path")
         return
-    bilder_db = Bilder_daten_Handler(db_path=db_path)
+    bilder_db = FaceDB(db_path=db_path)
     
-    image_files = bilder_db.get_all_bilder()
+    image_files = bilder_db.get_all_images()
     ende_der_bilder_index = bilder_zum_anzeigen
     if len(image_files)< bilder_zum_anzeigen:
         ende_der_bilder_index = len(image_files)
@@ -150,7 +126,7 @@ def start_show_images_from_folder_in_qlistwidget(list_widget,bilder_zum_anzeigen
     list_widget.ordner_list_bilder.clear()
 
     for i, bild_obj in enumerate(image_files):
-        file_path = bild_obj.name
+        file_path = bild_obj.file_name
         real_file_path = f"{folder_path}/{file_path}"
         loger.info(f"Bild Path {real_file_path}")
         pixmap = QPixmap(str(real_file_path))
