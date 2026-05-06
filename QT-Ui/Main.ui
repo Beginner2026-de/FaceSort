@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>602</width>
-    <height>517</height>
+    <width>626</width>
+    <height>528</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,7 +29,7 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizePolicy">
@@ -223,53 +223,77 @@
        <attribute name="title">
         <string>Personen</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QListWidget" name="list_person_images">
-          <property name="viewMode">
-           <enum>QListView::ViewMode::IconMode</enum>
+         <widget class="QTabWidget" name="personen_tabWidget">
+          <property name="currentIndex">
+           <number>0</number>
           </property>
+          <widget class="QWidget" name="a_benenen">
+           <attribute name="title">
+            <string>Benenen/umbenenen</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <widget class="QWidget" name="benenen_eigabe_box" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_8">
+               <item>
+                <widget class="QLineEdit" name="benenen_personen_nachrichten">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="benenen_personen_name"/>
+               </item>
+               <item>
+                <widget class="QPushButton" name="benenen_personen_name_abschiekcen_button">
+                 <property name="text">
+                  <string>Name Speichern</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="benenen_personen_bilder_anzeigen" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="b_zusammenfuegen">
+           <attribute name="title">
+            <string>Zusammenfügen</string>
+           </attribute>
+          </widget>
+          <widget class="QWidget" name="c_hauptbild_auswhlen">
+           <attribute name="title">
+            <string>Hauptbild auswählen</string>
+           </attribute>
+          </widget>
+          <widget class="QWidget" name="d_person_loeschen">
+           <attribute name="title">
+            <string>Person löschen</string>
+           </attribute>
+          </widget>
          </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="group_person_actions">
-          <property name="title">
-           <string>Aktionen</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QPushButton" name="btn_set_primary">
-             <property name="text">
-              <string>Als Hauptbild</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_delete_person">
-             <property name="text">
-              <string>Löschen</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_merge_persons">
-             <property name="text">
-              <string>Zusammenführen</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_rename_person">
-             <property name="text">
-              <string>Umbenennen</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QListWidget" name="list_persons"/>
         </item>
        </layout>
       </widget>
@@ -557,7 +581,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>602</width>
+     <width>626</width>
      <height>22</height>
     </rect>
    </property>
