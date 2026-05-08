@@ -5,7 +5,7 @@ from src.g_db_settings_handler import SettingsHandler
 from src.custom_logging import setup_logger
 from PySide6.QtCore import Qt,QSize
 from PySide6.QtGui import QPixmap, QImage,QIcon
-from PySide6.QtWidgets import QApplication,QListWidgetItem,QListWidget
+from PySide6.QtWidgets import QApplication,QListWidgetItem,QListWidget,QVBoxLayout,QPushButton
 import cv2
 from src.DBManager import FaceDB
 import os
@@ -160,8 +160,8 @@ def add_person_picture_to_widget(ui, widget, person_name):
     if not folder_path:
         person_nachrichten_handler(ui=ui, level="error", text="Kein Ordner gewählt")
         return
-    
     bilder_db = FaceDB(db_path=db_path)
+
     if person_name == "all":
         persons = bilder_db.get_all_person_names()
         for person_name in persons:
@@ -202,3 +202,37 @@ def add_person_picture_to_widget(ui, widget, person_name):
     item.setData(Qt.UserRole, person_name)  # oder Person-ID
     widget.addItem(item)
     QApplication.processEvents()
+
+def start_personen_bennen(ui):
+    load_person_buttons(ui=ui)
+
+def load_person_buttons(ui):
+    folder_path = ui.selected_folder_path.text()
+    db_path = f"{folder_path}/db.db"
+    if not folder_path:
+        person_nachrichten_handler(ui=ui, level="error", text="Kein Ordner gewählt")
+        return
+    bilder_db = FaceDB(db_path=db_path)
+
+    # Layout sicherstellen
+    widget = ui.personen_benenen_namen_liste
+    layout = widget.layout()
+    if layout is None:
+        layout = QVBoxLayout(widget)   # Vertikales Layout erstellen
+        widget.setLayout(layout)
+
+    # Alte Buttons löschen
+    for i in reversed(range(layout.count())): 
+        widget = layout.itemAt(i).widget()
+        if widget:
+            widget.deleteLater()
+
+    # Neue Buttons hinzufügen
+    for name in bilder_db.get_all_person_names():
+        btn = QPushButton(name)
+        btn.clicked.connect(lambda checked, n=name: on_person_clicked(n, ui))
+        layout.addWidget(btn)
+
+def on_person_clicked(name):
+    print(f"Person ausgewählt: {name}")
+    # hier weitere Verarbeitung
