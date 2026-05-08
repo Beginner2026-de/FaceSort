@@ -1,4 +1,6 @@
 /Bilder
 /build
 /dist
-gesichter.db
+__pycache__/
+/.vscode
+Start-Ui.bin
