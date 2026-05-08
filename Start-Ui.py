@@ -8,6 +8,7 @@ from a_ordner_auswählen import start_select_folder, start_show_images_from_fold
 from b_gesicht_erkennung import starte_gesicht_erkennung_alle
 from src.g_db_settings_handler import SettingsHandler
 from resource_path import resource_path
+from c_personen import start_personen_scan, add_person_picture_to_widget, person_nachrichten_handler
 
 loger = setup_logger(__name__)
 
@@ -34,12 +35,15 @@ class MainWindow(QMainWindow):
         #Scan
         self.ui.btn_start_scan.clicked.connect( lambda: starte_gesicht_erkennung_alle(self.ui))
 
+        # Personen
+        self.ui.starte_personen_scan.clicked.connect(lambda: start_personen_scan(ui=self.ui))        
+
         # Einstellungen
-        # In den Tab wechseln
+            # In den Tab wechseln
         self.ui.tabWidget.currentChanged.connect(lambda: on_change_in_tab(self))
-        # Thread anzahl ändern
+            # Thread anzahl ändern
         self.ui.spin_threads.valueChanged.connect(lambda: on_thread_changed())
-        # Modus umstellen
+            # Modus umstellen
         self.ui.combo_mode.currentTextChanged.connect(lambda: on_modus_changed())
 
         def make_settings_invisible():
@@ -76,7 +80,10 @@ class MainWindow(QMainWindow):
             index = self.ui.tabWidget.currentIndex()
             loger.info(f"Tab gewechselt zu index: {index}")
 
-            
+            if index == 2:
+                person_nachrichten_handler(ui=self.ui,display=False)
+                self.ui.starte_personen_scan_bild_liste.clear()
+                add_person_picture_to_widget(ui=self.ui,widget=self.ui.starte_personen_scan_bild_liste,person_name="all")
             # Oder nach Tab-Name
             if index == 6:
                 folder_path = self.ui.selected_folder_path.text()
