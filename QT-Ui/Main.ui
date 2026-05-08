@@ -243,7 +243,7 @@
         <item>
          <widget class="QTabWidget" name="personen_tabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="a_starte_personen_scan">
            <attribute name="title">
@@ -318,7 +318,7 @@
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout">
                <item>
-                <widget class="QWidget" name="personen_liste" native="true">
+                <widget class="QWidget" name="personen_benenen_namen_liste" native="true">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -328,7 +328,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QWidget" name="personen_bilder_anzeige_box" native="true">
+                <widget class="QWidget" name="personen_benenen_bilder_anzeige_box" native="true">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
