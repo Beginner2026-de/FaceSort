@@ -77,9 +77,7 @@ def add_db_to_folder(folder_path):
     db_path = f"{folder_path}/db.db"
     try:
         db = FaceDB(db_path)
-        db.connect()
         loger.info(f"DB erstellt oder existiert schon im pfad {db_path}")
-        db.close()
 
     except Exception as e:
         loger.error(f"Fehler bei Datenbankverbindung: {e}")
