@@ -1,3 +1,4 @@
+from peewee import ForeignKeyField
 import numpy as np
 import json
 from peewee import *
@@ -23,6 +24,7 @@ class Face(Model):
 
 class Person(Model):
     name = CharField(unique=True)
+    haupt_face = ForeignKeyField(Face, null=True, backref='hauptperson')  # Neues Feld
     
     class Meta:
         database = None
@@ -89,6 +91,17 @@ class FaceDB:
                 'gender': face.gender
             })
         return faces
+
+    def get_all_faces(self):
+        return Face.select()
+
+    def get_unassigned_faces(self):
+    #"""Gibt alle Faces zurück, die noch keiner Person zugeordnet sind"""
+        return (Face
+                .select()
+                .where(~Face.id.in_(
+                    FacePerson.select(FacePerson.face)
+                )))
     
     # -------------------------
     # PERSON
@@ -104,6 +117,34 @@ class FaceDB:
             person=person.id,
             confidence=confidence
         ).on_conflict_ignore().execute()
+
+    def get_all_person_names(self):
+        return [person.name for person in Person.select()]
+
+    def get_person_hauptbild_data(self, person_name):
+        person = Person.get(Person.name == person_name)
+        if person.haupt_face:
+            face = person.haupt_face
+            return face.image.file_name, json.loads(face.bbox) if face.bbox else None
+        return None, None
+
+    def set_haupt_bild_zu_person(self, person_name, face_id=None):
+    #"""Setzt Hauptbild einer Person. Ohne face_id wird das erste zugeordnete Gesicht genommen."""
+        person = Person.get(Person.name == person_name)
+        
+        if face_id is None:
+            # Erstes zugeordnetes Gesicht nehmen
+            face_person = (FacePerson
+                        .select()
+                        .where(FacePerson.person == person)
+                        .order_by(FacePerson.confidence.desc())
+                        .first())
+            if face_person:
+                face_id = face_person.face.id
+        
+        if face_id:
+            person.haupt_face = face_id
+            person.save()
     
     # -------------------------
     # SEARCH
