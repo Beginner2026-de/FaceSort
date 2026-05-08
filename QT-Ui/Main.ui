@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>626</width>
-    <height>528</height>
+    <width>557</width>
+    <height>546</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -225,11 +225,63 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
+         <widget class="QLineEdit" name="personen_nachrichten">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Nachricht</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QTabWidget" name="personen_tabWidget">
           <property name="currentIndex">
            <number>0</number>
           </property>
-          <widget class="QWidget" name="a_benenen">
+          <widget class="QWidget" name="a_starte_personen_scan">
+           <attribute name="title">
+            <string>Starte Personen Scan</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_9">
+            <item>
+             <widget class="QWidget" name="widget_2" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_4">
+               <item>
+                <widget class="QProgressBar" name="gefundene_personen_scan_progressBar">
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="starte_personen_scan">
+                 <property name="text">
+                  <string>Starte Personen scan</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QListWidget" name="starte_personen_scan_bild_liste"/>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="b_benenen">
            <attribute name="title">
             <string>Benenen/umbenenen</string>
            </attribute>
@@ -237,22 +289,12 @@
             <item>
              <widget class="QWidget" name="benenen_eigabe_box" native="true">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_8">
-               <item>
-                <widget class="QLineEdit" name="benenen_personen_nachrichten">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="readOnly">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
                <item>
                 <widget class="QLineEdit" name="benenen_personen_name"/>
                </item>
@@ -267,18 +309,40 @@
              </widget>
             </item>
             <item>
-             <widget class="QWidget" name="benenen_personen_bilder_anzeigen" native="true">
+             <widget class="QWidget" name="personen_anzeige_box" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <item>
+                <widget class="QWidget" name="personen_liste" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="personen_bilder_anzeige_box" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="b_zusammenfuegen">
+          <widget class="QWidget" name="e_zusammenfuegen">
            <attribute name="title">
             <string>Zusammenfügen</string>
            </attribute>
@@ -581,7 +645,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>626</width>
+     <width>557</width>
      <height>22</height>
     </rect>
    </property>
