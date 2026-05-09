@@ -8,7 +8,7 @@ from a_ordner_auswählen import start_select_folder, start_show_images_from_fold
 from b_gesicht_erkennung import starte_gesicht_erkennung_alle
 from src.g_db_settings_handler import SettingsHandler
 from resource_path import resource_path
-from c_personen import start_personen_scan, add_person_picture_to_widget, person_nachrichten_handler, start_personen_bennen
+from c_personen import start_personen_scan, person_nachrichten_handler, start_personen_bennen
 
 loger = setup_logger(__name__)
 
@@ -90,8 +90,6 @@ class MainWindow(QMainWindow):
 
             if index == 2:
                 person_nachrichten_handler(ui=self.ui,display=False)
-                self.ui.starte_personen_scan_bild_liste.clear()
-                add_person_picture_to_widget(ui=self.ui,widget=self.ui.starte_personen_scan_bild_liste,person_name="all")
             # Oder nach Tab-Name
             if index == 6:
                 folder_path = self.ui.selected_folder_path.text()
