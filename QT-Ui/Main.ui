@@ -328,14 +328,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QWidget" name="personen_benenen_bilder_anzeige_box" native="true">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                </widget>
+                <widget class="QListWidget" name="personen_benenen_bilder_anzeige_box"/>
                </item>
               </layout>
              </widget>
