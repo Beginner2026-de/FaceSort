@@ -1,4 +1,3 @@
-from peewee import *
 import cv2
 from insightface.app import FaceAnalysis
 from src.g_db_settings_handler import SettingsHandler
@@ -13,6 +12,7 @@ import numpy as np
 from sklearn.cluster import DBSCAN
 from scipy.spatial.distance import cosine
 import time
+from src.personen_picture_display_handler import PersonImageDisplay
 
 
 def start_personen_scan(ui):
@@ -109,7 +109,8 @@ def cluster_faces(ui,eps=0.5, min_samples=2):
     return clusters
 
 def auto_assign_persons(ui, eps=0.5, min_samples=2):
-    ui.starte_personen_scan_bild_liste.clear()
+    scan_bild_liste = PersonImageDisplay(ui=ui,list_widget=ui.starte_personen_scan_bild_liste)
+    scan_bild_liste.clear()
     """Automatisch Personen aus Clustern erstellen"""
     folder_path = ui.selected_folder_path.text()
     db_path = f"{folder_path}/db.db"
@@ -137,7 +138,7 @@ def auto_assign_persons(ui, eps=0.5, min_samples=2):
             bilder_db.assign_face_to_person(face_id, person_name, confidence=1.0)
 
         bilder_db.set_haupt_bild_zu_person(person_name=person_name)
-        add_person_picture_to_widget(ui=ui,widget=ui.starte_personen_scan_bild_liste,person_name=person_name)
+        scan_bild_liste.show_selected(names=person_name)
 
         person_nachrichten_handler(ui=ui,text=f"Person '{person_name}' mit {len(face_ids)} Gesichtern erstellt")
         progresbar_handler(ui=ui,wert=wert)
@@ -146,62 +147,6 @@ def auto_assign_persons(ui, eps=0.5, min_samples=2):
     person_nachrichten_handler(ui=ui,text=f"Alle Gesichter Gefunden, {len(clusters)} Gefunden und Gespeichert")
 
 
-def add_person_picture_to_widget(ui, widget, person_name):
-    QApplication.processEvents()
-    widget.setViewMode(QListWidget.IconMode)      # Rasteransicht
-    widget.setMovement(QListWidget.Static)        # Verschieben verhindern
-    widget.setWrapping(True)                      # Zeilenumbruch
-    widget.setFlow(QListWidget.LeftToRight)       # links → rechts (Standard)
-    widget.setIconSize(QSize(80, 80))
-    widget.setIconSize(QSize(80, 80))
-    
-    folder_path = ui.selected_folder_path.text()
-    db_path = f"{folder_path}/db.db"
-    if not folder_path:
-        person_nachrichten_handler(ui=ui, level="error", text="Kein Ordner gewählt")
-        return
-    bilder_db = FaceDB(db_path=db_path)
-
-    if person_name == "all":
-        persons = bilder_db.get_all_person_names()
-        for person_name in persons:
-                # Holt (file_name, bbox)
-            file_name, bbox = bilder_db.get_person_hauptbild_data(person_name=person_name)
-            real_file_path = f"{folder_path}/{file_name}"
-            
-            if file_name is None or bbox is None:
-                return
-            
-            img = QPixmap(real_file_path)
-            # bbox ist Liste/Tupel: [x1, y1, x2, y2]
-            x1, y1, x2, y2 = bbox
-            cropped = img.copy(x1, y1, x2 - x1, y2 - y1)
-            scaled = cropped.scaled(80, 80, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            
-            item = QListWidgetItem(QIcon(scaled), person_name)
-            item.setData(Qt.UserRole, person_name)  # oder Person-ID
-            widget.addItem(item)
-            QApplication.processEvents()
-        return
-
-    
-    # Holt (file_name, bbox)
-    file_name, bbox = bilder_db.get_person_hauptbild_data(person_name=person_name)
-    real_file_path = f"{folder_path}/{file_name}"
-    
-    if file_name is None or bbox is None:
-        return
-    
-    img = QPixmap(real_file_path)
-    # bbox ist Liste/Tupel: [x1, y1, x2, y2]
-    x1, y1, x2, y2 = bbox
-    cropped = img.copy(x1, y1, x2 - x1, y2 - y1)
-    scaled = cropped.scaled(80, 80, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-    
-    item = QListWidgetItem(QIcon(scaled), person_name)
-    item.setData(Qt.UserRole, person_name)  # oder Person-ID
-    widget.addItem(item)
-    QApplication.processEvents()
 
 def start_personen_bennen(ui):
     load_person_buttons(ui=ui)
@@ -230,9 +175,8 @@ def load_person_buttons(ui):
     # Neue Buttons hinzufügen
     for name in bilder_db.get_all_person_names():
         btn = QPushButton(name)
-        btn.clicked.connect(lambda checked, n=name: on_person_clicked(n, ui))
+        btn.clicked.connect(lambda checked, n=name: on_person_clicked(name=n, ui=ui))
         layout.addWidget(btn)
 
-def on_person_clicked(name):
-    print(f"Person ausgewählt: {name}")
-    # hier weitere Verarbeitung
+def on_person_clicked(ui,name):
+    person_nachrichten_handler(ui=ui,text=f"Person ausgewählt: {name}")
