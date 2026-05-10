@@ -1,4 +1,3 @@
-from peewee import *
 import cv2
 from insightface.app import FaceAnalysis
 from src.g_db_settings_handler import SettingsHandler
@@ -9,6 +8,7 @@ from PySide6.QtWidgets import QApplication
 import cv2
 from src.DBManager import FaceDB
 import os
+from src.progressbar_clas import ProgressBar
 
 loger = setup_logger(__name__)
 
@@ -21,19 +21,13 @@ def starte_gesicht_erkennung_alle(ui):
     settings_db = SettingsHandler(db_path=db_path)
     alle_bilder_ojekte = bilder_db.get_all_images()
 
-    # ProgressBar konfigurieren
-    ui.scan_progressBar.setMaximum(len(alle_bilder_ojekte))
-    ui.scan_progressBar.setMinimum(0)
-    ui.scan_progressBar.setValue(0)
-    ui.scan_progressBar.setVisible(True)
-    ui.scan_progressBar.setFormat("%p% - %v von %m Bildern")
+    bar = ProgressBar(ui=ui,max=len(alle_bilder_ojekte),list_widget=ui.scan_progressBar)
 
     for i, bilder in enumerate(alle_bilder_ojekte):
     # 1. ORIGINALBILD path
         faces_by_image = bilder_db.get_faces_by_image(bilder.file_name)
         if faces_by_image:
-            progress_value = i + 1
-            ui.scan_progressBar.setValue(progress_value)
+            bar.update()
             continue
         bild_path = bilder.file_name
         voller_pfad = f"{folder_path}/{bild_path}"
@@ -84,8 +78,8 @@ def starte_gesicht_erkennung_alle(ui):
         loger.info(f"Bild mit {face_ids} Gesichtern erkannt")
         progress_value = i + 1
         
-        ui.scan_progressBar.setValue(progress_value)
-    
+        bar.update()
+    bar.fertig()
 
 def scalier_und_anzeigen_in_objekt(element,pixmap):
     element.setScaledContents(False)
