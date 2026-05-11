@@ -2,6 +2,7 @@ from PySide6.QtCore import Qt,QSize
 from PySide6.QtGui import QPixmap,QIcon
 from PySide6.QtWidgets import QApplication, QListWidgetItem, QListWidget, QVBoxLayout, QPushButton, QListView
 from src.DBManager import FaceDB
+from src.custom_logging import setup_logger
 
 
 class PersonImageDisplay:
@@ -25,37 +26,65 @@ class PersonImageDisplay:
 
     def show_all_images(self, file_name):
         self.clear()
-        for file in file_name:
-            self._add_image(file)
+        for name in names:
+            self._add_picture(file_name=name)
         
-    def show_first_n_images(self, file_name: str, n: int = 10):
-        """Zeigt die ersten n Bilder einer bestimmten Person"""
-        self.clear()
+    def show_first_n_off_name(self, name: str, n: int = 10):
+        loger = setup_logger(__name__)
+        #"""Zeigt die ersten n Bilder einer bestimmten Person"""
+        try:
+            self.clear()
+            db = self._get_db()
+            
+            # Alle Bilder dieser Person holen
+            images = db.get_images_by_person(name)
+            loger.info(f"Bilder der Person Gefunden {len(images)}")
+            
+            # Nur die ersten n Bilder anzeigen
+            for i, image in enumerate(images):
+                loger.info(f"{i} Bild gefunden von person {name}")
+                if i >= n:
+                    break
+                self._add_picture(file_name=image.file_name)  # Neue Methode für Bilder einer Person
+        except Exception as e:
+            loger.error(f"Fehler bekommen {e}")
 
-        # Nur die ersten n Bilder anzeigen
-        for i, file in enumerate(file_name):
-            if i >= n:
-                break
-            self._add_image(file.file_name)  # Neue Methode für Bilder einer Person
+    
+    def get_person_hauptbild(self, name):
+            db = self._get_db()
+            if name not in db.get_all_person_names():
+                print(f"Person '{name}' existiert nicht in DB")
+                return
+            
+            # Anzahl der Bilder holen
+            image_count = db.get_person_image_count(name)
+            
+            file_name, bbox = db.get_person_hauptbild_data(name)
+            if not file_name or not bbox:
+                return
+            self._add_picture(bbox=bbox,file_name=file_name)
 
     def _get_db(self):
         folder = self.ui.selected_folder_path.text()
         return FaceDB(f"{folder}/db.db")
     
-    def _add_image(self, file_name):
-        db = self._get_db()
+    
         
-        file_name, bbox = db.get_person_hauptbild_data(file_name)
-        if not file_name or not bbox:
-            return
-        
+
+
+    def _add_picture(self,file_name,bbox=None):
         path = f"{self.ui.selected_folder_path.text()}/{file_name}"
         pix = QPixmap(path)
-        x1, y1, x2, y2 = bbox
-        cropped = pix.copy(x1, y1, x2-x1, y2-y1)
-        scaled = cropped.scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        if bbox:
+            x1, y1, x2, y2 = bbox
+            cropped = pix.copy(x1, y1, x2-x1, y2-y1)
+            scaled = cropped.scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        else:
+            scaled = pix.scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        # Text mit Bildanzahl
+        display_text = f"{file_name}"
         
-        item = QListWidgetItem(QIcon(scaled))
-        item.setData(Qt.UserRole, file_name)
-        self.widget.addItem(file_name)
+        item = QListWidgetItem(QIcon(scaled), display_text)
+        item.setData(Qt.UserRole, name)
+        self.widget.addItem(item)
         QApplication.processEvents()

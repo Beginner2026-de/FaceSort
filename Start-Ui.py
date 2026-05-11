@@ -9,7 +9,8 @@ from main_tab.a_ordner_auswählen import start_select_folder, start_show_images_
 from main_tab.b_gesicht_erkennung import starte_gesicht_erkennung_alle
 from src.g_db_settings_handler import SettingsHandler
 from src.resource_path import resource_path
-from main_tab.c_unter_tab.start_personen_scan import start_personen_scan, person_nachrichten_handler, start_personen_bennen
+from main_tab.c_unter_tab.start_personen_scan import start_personen_scan, person_nachrichten_handler
+from main_tab.c_unter_tab.benenen import start_personen_bennen
 
 loger = setup_logger(__name__)
 
@@ -45,7 +46,8 @@ class MainWindow(QMainWindow):
         def on_chnage_in_person_tab(ui):
             index = ui.personen_tabWidget.currentIndex()
             loger.info(f"Personen Tab gewechselt zu index: {index}")
-            start_personen_bennen(ui)
+            if index == 1:
+                start_personen_bennen(ui)
 
         # Einstellungen
             # In den Tab wechseln

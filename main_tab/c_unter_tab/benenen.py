@@ -54,6 +54,6 @@ def load_person_buttons(ui):
 
 def on_person_clicked(ui,name):
     nachrichten_class = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
-    nachrichten_class.info(text=f"Person ausgewählt: {name}")
+    nachrichten_class.info(text=f"Person geklickt: {name}")
     bilder_widget = PersonImageDisplay(ui=ui,list_widget=ui.personen_benenen_bilder_anzeige_box)
     bilder_widget.show_first_n_off_name(name=name)

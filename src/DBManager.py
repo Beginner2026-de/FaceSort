@@ -1,7 +1,7 @@
 from peewee import ForeignKeyField
 import numpy as np
 import json
-from peewee import *
+from peewee import SqliteDatabase,Model,CharField,BlobField,TextField,IntegerField,FloatField,CompositeKey
 
 # ======================
 # 1. TABELLEN DEFINIEREN (VOR DER KLASSE!)
@@ -164,7 +164,7 @@ class FaceDB:
         return(Image.select())
     
     def get_person_image_count(self, person_name):
-        """Gibt die Anzahl der Bilder zurück, die einer Person zugeordnet sind"""
+        #"""Gibt die Anzahl der Bilder zurück, die einer Person zugeordnet sind"""
         person = Person.get_or_none(Person.name == person_name)
         if person is None:
             return 0
