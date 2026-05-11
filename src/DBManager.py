@@ -149,13 +149,16 @@ class FaceDB:
     # -------------------------
     # SEARCH
     # -------------------------
-    def get_images_by_person(self, name):
+    def get_all_persons_images(self, person_name):
+        person = Person.get_or_none(Person.name == person_name)
+        if person is None:
+            return 0
         return (Image
                 .select()
                 .join(Face)
                 .join(FacePerson)
                 .join(Person)
-                .where(Person.name == name))
+                .where(Person.name == person_name))
 
     def get_all_images(self):
         return(Image.select())

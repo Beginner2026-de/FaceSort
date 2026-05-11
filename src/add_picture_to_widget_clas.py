@@ -22,50 +22,30 @@ class PersonImageDisplay:
     def clear(self):
         self.widget.clear()
     
-    def show_all(self):
-        self.clear()
-        names = self._get_db().get_all_person_names()
-        for name in names:
-            self._add_person(name)
-    
 
-    def show_selected(self, names):
-        print(f"Übergebene Namen: {names}")  # Debug: Was kommt an?
+    def show_all_images(self, file_name):
         self.clear()
-        for name in names:
-            self._add_person(name)
+        for file in file_name:
+            self._add_image(file)
         
-    def show_first_n_off_name(self, name: str, n: int = 10):
+    def show_first_n_images(self, file_name: str, n: int = 10):
         """Zeigt die ersten n Bilder einer bestimmten Person"""
         self.clear()
-        db = self._get_db()
-        
-        # Alle Bilder dieser Person holen
-        images = db.get_images_by_person(name)
-        
+
         # Nur die ersten n Bilder anzeigen
-        for i, image in enumerate(images):
+        for i, file in enumerate(file_name):
             if i >= n:
                 break
-            self._add_person(image.file_name)  # Neue Methode für Bilder einer Person
+            self._add_image(file.file_name)  # Neue Methode für Bilder einer Person
 
-    def show_person(self, name):
-        self._add_person(name)
-    
     def _get_db(self):
         folder = self.ui.selected_folder_path.text()
         return FaceDB(f"{folder}/db.db")
     
-    def _add_person(self, name):
+    def _add_image(self, file_name):
         db = self._get_db()
-        if name not in db.get_all_person_names():
-            print(f"Person '{name}' existiert nicht in DB")
-            return
         
-        # Anzahl der Bilder holen
-        image_count = db.get_person_image_count(name)
-        
-        file_name, bbox = db.get_person_hauptbild_data(name)
+        file_name, bbox = db.get_person_hauptbild_data(file_name)
         if not file_name or not bbox:
             return
         
@@ -75,10 +55,7 @@ class PersonImageDisplay:
         cropped = pix.copy(x1, y1, x2-x1, y2-y1)
         scaled = cropped.scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         
-        # Text mit Bildanzahl
-        display_text = f"{name}\n({image_count} Bilder)"
-        
-        item = QListWidgetItem(QIcon(scaled), display_text)
-        item.setData(Qt.UserRole, name)
-        self.widget.addItem(item)
+        item = QListWidgetItem(QIcon(scaled))
+        item.setData(Qt.UserRole, file_name)
+        self.widget.addItem(file_name)
         QApplication.processEvents()

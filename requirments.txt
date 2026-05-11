@@ -5,3 +5,4 @@ onnxruntime-gpu
 peewee
 pyside6
 nuitka
+numpy
