@@ -159,3 +159,16 @@ class FaceDB:
 
     def get_all_images(self):
         return(Image.select())
+    
+    def get_person_image_count(self, person_name):
+        """Gibt die Anzahl der Bilder zurück, die einer Person zugeordnet sind"""
+        person = Person.get_or_none(Person.name == person_name)
+        if person is None:
+            return 0
+        return (Image
+                .select()
+                .join(Face)
+                .join(FacePerson)
+                .join(Person)
+                .where(Person.name == person_name)
+                .count())

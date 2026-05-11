@@ -5,12 +5,11 @@ from PySide6.QtWidgets import QFileDialog,QListWidgetItem,QApplication
 from PySide6.QtCore import QSize,Qt
 from PySide6.QtGui import QPixmap, QIcon
 from pathlib import Path
-from peewee import *
 from src.custom_logging import setup_logger
 from src.g_db_settings_handler import SettingsHandler
 from src.DBManager import FaceDB
+from src.progressbar_clas import ProgressBar
 
-loger = setup_logger(__name__)
 
 
 
@@ -33,14 +32,9 @@ def start_select_folder(parent_widget):
     image_files = [f for f in folder.glob('**/*') 
         if f.is_file() and f.suffix.lower() in image_extensions]
             # ProgressBar konfigurieren
-    parent_widget.ordner_loading_names_to_progressbar.setMaximum(len(image_files))
-    parent_widget.ordner_loading_names_to_progressbar.setMinimum(0)
-    parent_widget.ordner_loading_names_to_progressbar.setValue(0)
-    parent_widget.ordner_loading_names_to_progressbar.setVisible(True)
-    
-    # Optional: Text-Format für Prozentanzeige
-    parent_widget.ordner_loading_names_to_progressbar.setFormat("%p% - %v von %m Bildern")
-    for i, file_path in enumerate(image_files):
+    bar = ProgressBar(ui=parent_widget,max=len(image_files),list_widget=parent_widget.ordner_loading_names_to_progressbar)
+
+    for file_path in image_files:
         # Ermöglicht UI-Updates während des Ladens
         QApplication.processEvents()
     
@@ -48,24 +42,23 @@ def start_select_folder(parent_widget):
         bilder_db = FaceDB(db_path=db_path)
         bilder_db.add_image(file_name=image_name)
         #add_picture_names_to_db(picture_name=image_name,db_path=db_path)
-        # Fortschritt aktualisieren
-        progress_value = i + 1
-        parent_widget.ordner_loading_names_to_progressbar.setValue(progress_value)
+        bar.update()
 
 
     # Nach dem Laden: Text ändern
-    parent_widget.ordner_loading_names_to_progressbar.setFormat("Fertig! %v Bilder geladen")
+    bar.fertig()
     
     
     Settingsdb.close()
 
 
 def select_folder(parent_widget):
+    loger = setup_logger(__name__)
     folder = QFileDialog.getExistingDirectory(
         parent_widget, 
         "Ordner auswählen", 
         "",
-        QFileDialog.ShowDirsOnly
+        QFileDialog.Option.ShowDirsOnly
     )
     if not folder:
         loger.error("Kein Ordner wurde gewählt:")
@@ -74,6 +67,7 @@ def select_folder(parent_widget):
     return folder if folder else None
 
 def add_db_to_folder(folder_path):
+    loger = setup_logger(__name__)
     db_path = f"{folder_path}/db.db"
     try:
         db = FaceDB(db_path)
@@ -87,6 +81,7 @@ def add_db_to_folder(folder_path):
 
     
 def start_show_images_from_folder_in_qlistwidget(list_widget,bilder_zum_anzeigen):
+    loger = setup_logger(__name__)
     loger.info(f"anzahl der bilder die angezeit werden sollen {bilder_zum_anzeigen}")
     folder_path = list_widget.selected_folder_path.text()
     db_path = f"{folder_path}/db.db"
@@ -114,12 +109,7 @@ def start_show_images_from_folder_in_qlistwidget(list_widget,bilder_zum_anzeigen
     # Fortschritt in der Konsole (optional)
     loger.info(f"Lade {len(image_files)} Bilder...")
 
-        # ProgressBar konfigurieren
-    list_widget.ordner_loading_pictures_progressbar.setMaximum(len(image_files))
-    list_widget.ordner_loading_pictures_progressbar.setMinimum(0)
-    list_widget.ordner_loading_pictures_progressbar.setValue(0)
-    list_widget.ordner_loading_pictures_progressbar.setVisible(True)
-    list_widget.ordner_loading_pictures_progressbar.setFormat("%p% - %v von %m Bildern")
+    bar = ProgressBar(ui=list_widget,max=len(image_files),list_widget=list_widget.ordner_loading_pictures_progressbar)
     
     list_widget.ordner_list_bilder.clear()
 
@@ -129,7 +119,7 @@ def start_show_images_from_folder_in_qlistwidget(list_widget,bilder_zum_anzeigen
         loger.info(f"Bild Path {real_file_path}")
         pixmap = QPixmap(str(real_file_path))
         if not pixmap.isNull():
-            scaled_pixmap = pixmap.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            scaled_pixmap = pixmap.scaled(100, 100, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
             
             item = QListWidgetItem()
             item.setIcon(QIcon(scaled_pixmap))
@@ -141,11 +131,5 @@ def start_show_images_from_folder_in_qlistwidget(list_widget,bilder_zum_anzeigen
         else:
             return
 
-        # Fortschritt aktualisieren
-        progress_value = i + 1
-        
-        list_widget.ordner_loading_pictures_progressbar.setValue(progress_value)
-
-
-    # Nach dem Laden: Text ändern
-    list_widget.ordner_loading_pictures_progressbar.setFormat("Fertig! %v Bilder geladen")
+        bar.update()
+    bar.fertig(abschluss_text="Bilder Geladen")

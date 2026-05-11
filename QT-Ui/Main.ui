@@ -243,7 +243,7 @@
         <item>
          <widget class="QTabWidget" name="personen_tabWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="a_starte_personen_scan">
            <attribute name="title">
