@@ -105,6 +105,57 @@ class FaceDB:
     # -------------------------
     # PERSON
     # -------------------------
+    def merge_persons(self, source_name, target_name):
+
+        source = Person.get_or_none(Person.name == source_name)
+        target = Person.get_or_none(Person.name == target_name)
+
+        if not source or not target:
+            return {"success": False}
+
+        with self.db.atomic():
+
+            (FacePerson
+            .update(person=target)
+            .where(FacePerson.person == source)
+            .execute())
+
+            if source.haupt_face and not target.haupt_face:
+                target.haupt_face = source.haupt_face
+                target.save()
+
+            source.delete_instance()
+
+        return {"success": True}
+
+    def rename_person(self, old_name: str, new_name: str):
+        # alte Person holen
+        person = Person.get_or_none(Person.name == old_name)
+
+        if person is None:
+            return {
+                "success": False,
+                "error": "Person nicht gefunden"
+            }
+
+        # prüfen ob neuer Name schon existiert
+        exists = Person.get_or_none(Person.name == new_name)
+        if exists:
+            return {
+                "success": False,
+                "error": "Name bereits vergeben"
+            }
+
+        # update
+        person.name = new_name
+        person.save()
+
+        return {
+            "success": True,
+            "old_name": old_name,
+            "new_name": new_name
+        }
+
     def create_person(self, name):
         person, _ = Person.get_or_create(name=name)
         return person
