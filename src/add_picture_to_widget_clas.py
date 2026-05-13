@@ -85,7 +85,7 @@ class PersonImageDisplay:
 
                 pix = pix.copy(x1, y1, w, h)
 
-                display_text = (f"{file_name} (Face)")
+                display_text = (f"{file_name}")
 
             else:
                 display_text = file_name

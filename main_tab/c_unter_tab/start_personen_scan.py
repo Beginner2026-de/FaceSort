@@ -65,9 +65,9 @@ def cluster_faces(ui,eps=0.5, min_samples=2):
     face_ids = []
     wert = 1
     for face in faces:
-        emb = np.frombuffer(face.embedding, dtype=np.float32)
+        emb = np.frombuffer(face["embedding"], dtype=np.float32)
         embeddings.append(emb)
-        face_ids.append(face.id)
+        face_ids.append(face["face_id"])
         wert =+ 1
         clusterbar.update()
     clusterbar.fertig()

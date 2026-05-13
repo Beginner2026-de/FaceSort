@@ -79,34 +79,28 @@ class FaceDB:
     
     def get_faces_by_image(self, file_name):
         image = Image.get(Image.file_name == file_name)
-        faces = []
-        for face in image.faces:
-            # Embedding zurückkonvertieren
-            embedding = np.frombuffer(face.embedding, dtype=np.float32)
-            bbox = json.loads(face.bbox) if face.bbox else None
-            faces.append({
-                'id': face.id,
-                'embedding': embedding,
-                'bbox': bbox,
-                'age': face.age,
-                'gender': face.gender
-            })
-        return faces
+
+        return [
+            self._face_to_dto(face)
+            for face in image.faces
+        ]
 
     def get_all_faces(self):
-        return Face.select()
+        return [
+            self._face_to_dto(face)
+            for face in Face.select()
+        ]
 
     def get_unassigned_faces(self):
-        return (
+        query = (
             Face
             .select()
-            .where(
-                ~Face.id.in_(
-                    FacePerson
-                    .select(FacePerson.face_id)
-                )
-            )
+            .where(~Face.id.in_(
+                FacePerson.select(FacePerson.face)
+            ))
         )
+
+        return [self._face_to_dto(face) for face in query]
     
     # -------------------------
     # PERSON
@@ -128,16 +122,13 @@ class FaceDB:
 
     def get_person_hauptbild_data(self, person_name):
         person = Person.get_or_none(Person.name == person_name)
-        
+
         if not person or not person.haupt_face:
             return None
 
         face = person.haupt_face
 
-        return {
-            "image_path": face.image.file_name,
-            "bbox": json.loads(face.bbox) if face.bbox else None
-        }
+        return self._face_to_dto(face, person_name)
 
     def set_haupt_bild_zu_person(self, person_name, face_id=None):
     #"""Setzt Hauptbild einer Person. Ohne face_id wird das erste zugeordnete Gesicht genommen."""
@@ -175,21 +166,7 @@ class FaceDB:
                     .where(Person.name == person_name))
     
     def get_all_persons_faces(self, person_name):
-        """
-        Gibt alle Faces einer Person zurück.
-        
-        Returns:
-            [
-                {
-                    "image_path": "...",
-                    "bbox": {...},
-                    "face_id": 1
-                }
-            ]
-        """
-        
         person = Person.get_or_none(Person.name == person_name)
-
         if person is None:
             return []
 
@@ -203,16 +180,10 @@ class FaceDB:
             .where(Person.name == person_name)
         )
 
-        result = []
-
-        for face in query:
-            result.append({
-                "face_id": face.id,
-                "image_path": face.image.file_name,
-                "bbox": json.loads(face.bbox) if face.bbox else None
-            })
-
-        return result
+        return [
+            self._face_to_dto(face, person_name)
+            for face in query
+        ]
         
 
     
@@ -244,3 +215,12 @@ class FaceDB:
                 .join(Person)
                 .where(Person.name == person_name)
                 .count())
+
+    def _face_to_dto(self, face, person_name=None):
+        return {
+            "face_id": face.id,
+            "image_path": face.image.file_name,
+            "bbox": json.loads(face.bbox) if face.bbox else None,
+            "embedding": face.embedding,
+            "person_name": person_name
+        }
