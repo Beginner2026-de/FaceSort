@@ -56,7 +56,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="selected_folder_path"/>
+           <widget class="QLineEdit" name="selected_folder_path">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -335,17 +339,58 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="e_zusammenfuegen">
+          <widget class="QWidget" name="c_zusammenfuegen">
            <attribute name="title">
             <string>Zusammenfügen</string>
            </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_10">
+            <item>
+             <widget class="QPushButton" name="zusammenfuegen_button">
+              <property name="text">
+               <string>Personen Zusammenfügen</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="widget_3" native="true">
+              <layout class="QGridLayout" name="gridLayout_2">
+               <item row="2" column="1">
+                <widget class="QListWidget" name="zusamnenfegen_person_eins_bilder"/>
+               </item>
+               <item row="2" column="3">
+                <widget class="QListWidget" name="zusamnenfegen_person_zwei_bilder"/>
+               </item>
+               <item row="1" column="3">
+                <widget class="QWidget" name="zusamnenfegen_person_zwei" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QWidget" name="zusamnenfegen_person_eins" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
           </widget>
-          <widget class="QWidget" name="c_hauptbild_auswhlen">
+          <widget class="QWidget" name="d_hauptbild_auswhlen">
            <attribute name="title">
             <string>Hauptbild auswählen</string>
            </attribute>
           </widget>
-          <widget class="QWidget" name="d_person_loeschen">
+          <widget class="QWidget" name="e_person_loeschen">
            <attribute name="title">
             <string>Person löschen</string>
            </attribute>
