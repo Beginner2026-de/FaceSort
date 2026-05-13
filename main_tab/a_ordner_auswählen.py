@@ -45,8 +45,7 @@ def start_select_folder(parent_widget):
         bar.update()
 
 
-    # Nach dem Laden: Text ändern
-    bar.fertig()
+    bar.fertig(abschluss_text=f"Alle bilder geladen")
     
     
     Settingsdb.close()
