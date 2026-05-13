@@ -16,6 +16,8 @@ from src.add_picture_to_widget_clas import PersonImageDisplay
 from src.progressbar_clas import ProgressBar
 from src.nachrichten_clas import Nachrichten
 
+aktueller_button_name:str = ""
+
 def start_personen_bennen(ui):
     load_person_buttons(ui=ui)
 
@@ -53,6 +55,8 @@ def load_person_buttons(ui):
         layout.addWidget(btn)
 
 def on_person_clicked(ui,name):
+    global aktueller_button_name 
+    aktueller_button_name =  name
     nachrichten_class = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
     nachrichten_class.info(text=f"Person geklickt: {name}")
     folder_path = ui.selected_folder_path.text()
@@ -62,3 +66,18 @@ def on_person_clicked(ui,name):
     display = PersonImageDisplay(ui=ui, list_widget=ui.personen_benenen_bilder_anzeige_box,face_only=True)
     display.clear()
     display.show_first_n_images(file_names=person_faces)
+
+def benenen_personen_name_abschiekcen_button(ui):
+    folder_path = ui.selected_folder_path.text()
+    db_path = f"{folder_path}/db.db"
+    db = FaceDB(db_path=db_path)
+    nachrichten_class = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
+    neuer_name:str = ui.benenen_personen_name.text()
+    print(aktueller_button_name)
+    anser = db.rename_person(old_name=aktueller_button_name,new_name=neuer_name)
+    print(anser)
+    load_person_buttons(ui=ui)
+    if anser["success"] == True:
+        nachrichten_class.info(f"Alter Name ({anser["old_name"]}) wurde zu ({anser["new_name"]}) geändert")
+    if anser["success"] == False:
+        nachrichten_class.error(f"{anser["error"]} Alt ({aktueller_button_name}) Neu ({neuer_name})")
