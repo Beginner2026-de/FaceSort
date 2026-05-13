@@ -10,7 +10,7 @@ from main_tab.b_gesicht_erkennung import starte_gesicht_erkennung_alle
 from src.g_db_settings_handler import SettingsHandler
 from src.resource_path import resource_path
 from main_tab.c_unter_tab.start_personen_scan import start_personen_scan, person_nachrichten_handler
-from main_tab.c_unter_tab.benenen import start_personen_bennen
+from main_tab.c_unter_tab.benenen import start_personen_bennen, benenen_personen_name_abschiekcen_button
 
 loger = setup_logger(__name__)
 
@@ -42,6 +42,7 @@ class MainWindow(QMainWindow):
         self.ui.starte_personen_scan.clicked.connect(lambda: start_personen_scan(ui=self.ui))        
         #Personen unbennen
         self.ui.personen_tabWidget.currentChanged.connect(lambda: on_chnage_in_person_tab(ui=self.ui))
+        self.ui.benenen_personen_name_abschiekcen_button.clicked.connect(lambda: benenen_personen_name_abschiekcen_button(ui=self.ui))
 
         def on_chnage_in_person_tab(ui):
             index = ui.personen_tabWidget.currentIndex()
