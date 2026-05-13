@@ -55,5 +55,10 @@ def load_person_buttons(ui):
 def on_person_clicked(ui,name):
     nachrichten_class = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
     nachrichten_class.info(text=f"Person geklickt: {name}")
-    bilder_widget = PersonImageDisplay(ui=ui,list_widget=ui.personen_benenen_bilder_anzeige_box)
-    bilder_widget.show_first_n_off_name(name=name)
+    folder_path = ui.selected_folder_path.text()
+    db_path = f"{folder_path}/db.db"
+    db = FaceDB(db_path=db_path)
+    person_faces = db.get_all_persons_faces(person_name=name)
+    display = PersonImageDisplay(ui=ui, list_widget=ui.personen_benenen_bilder_anzeige_box,face_only=True)
+    display.clear()
+    display.show_first_n_images(file_names=person_faces)

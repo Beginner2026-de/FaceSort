@@ -98,7 +98,7 @@ def cluster_faces(ui,eps=0.5, min_samples=2):
     return clusters
 
 def auto_assign_persons(ui, eps=0.5, min_samples=2):
-    scan_bild_liste = PersonImageDisplay(ui=ui,list_widget=ui.starte_personen_scan_bild_liste)
+    scan_bild_liste = PersonImageDisplay(ui=ui,list_widget=ui.starte_personen_scan_bild_liste,face_only=True)
     scan_bild_liste.clear()
     """Automatisch Personen aus Clustern erstellen"""
     folder_path = ui.selected_folder_path.text()
@@ -128,7 +128,9 @@ def auto_assign_persons(ui, eps=0.5, min_samples=2):
             bilder_db.assign_face_to_person(face_id, person_name, confidence=1.0)
 
         bilder_db.set_haupt_bild_zu_person(person_name=person_name)
-        scan_bild_liste.show_person(name=person_name)
+        bild_der_person = bilder_db.get_person_hauptbild_data(person_name=person_name)
+        print (bild_der_person)
+        scan_bild_liste.show_all_images(file_names=bild_der_person)
 
         person_nachrichten_handler(ui=ui,text=f"Person '{person_name}' mit {len(face_ids)} Gesichtern erstellt")
         clusterbar3.update()
@@ -136,42 +138,3 @@ def auto_assign_persons(ui, eps=0.5, min_samples=2):
     clusterbar3.fertig()
     person_nachrichten_handler(ui=ui,text=f"Alle Gesichter Gefunden, {len(clusters)} Gefunden und Gespeichert")
 
-
-
-def start_personen_bennen(ui):
-    load_person_buttons(ui=ui)
-
-def load_person_buttons(ui):
-    folder_path = ui.selected_folder_path.text()
-    db_path = f"{folder_path}/db.db"
-    
-    if not folder_path:
-        person_nachrichten_handler(ui=ui, level="error", text="Kein Ordner gewählt")
-        return
-    
-    bilder_db = FaceDB(db_path=db_path)
-    container = ui.personen_benenen_namen_liste
-    
-    # Vorhandene Buttons löschen
-    for child in container.findChildren(QPushButton):
-        child.deleteLater()
-    
-    # Layout erstellen oder vorhandenes nehmen
-    if container.layout() is None:
-        layout = QVBoxLayout(container)
-    else:
-        layout = container.layout()
-        # Vorhandene Widgets aus Layout entfernen
-        while layout.count():
-            item = layout.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
-    
-    # Neue Buttons hinzufügen
-    for name in bilder_db.get_all_person_names():
-        btn = QPushButton(name)
-        btn.clicked.connect(lambda checked, n=name: on_person_clicked(ui=ui, name=n))
-        layout.addWidget(btn)
-
-def on_person_clicked(ui,name):
-    person_nachrichten_handler(ui=ui,text=f"Person ausgewählt: {name}")

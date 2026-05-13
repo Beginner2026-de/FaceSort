@@ -1,6 +1,7 @@
 from peewee import ForeignKeyField
 import numpy as np
 import json
+import os
 from peewee import SqliteDatabase,Model,CharField,BlobField,TextField,IntegerField,FloatField,CompositeKey
 
 # ======================
@@ -96,12 +97,16 @@ class FaceDB:
         return Face.select()
 
     def get_unassigned_faces(self):
-    #"""Gibt alle Faces zurück, die noch keiner Person zugeordnet sind"""
-        return (Face
-                .select()
-                .where(~Face.id.in_(
-                    FacePerson.select(FacePerson.face)
-                )))
+        return (
+            Face
+            .select()
+            .where(
+                ~Face.id.in_(
+                    FacePerson
+                    .select(FacePerson.face_id)
+                )
+            )
+        )
     
     # -------------------------
     # PERSON
@@ -122,11 +127,17 @@ class FaceDB:
         return [person.name for person in Person.select()]
 
     def get_person_hauptbild_data(self, person_name):
-        person = Person.get(Person.name == person_name)
-        if person.haupt_face:
-            face = person.haupt_face
-            return face.image.file_name, json.loads(face.bbox) if face.bbox else None
-        return None, None
+        person = Person.get_or_none(Person.name == person_name)
+        
+        if not person or not person.haupt_face:
+            return None
+
+        face = person.haupt_face
+
+        return {
+            "image_path": face.image.file_name,
+            "bbox": json.loads(face.bbox) if face.bbox else None
+        }
 
     def set_haupt_bild_zu_person(self, person_name, face_id=None):
     #"""Setzt Hauptbild einer Person. Ohne face_id wird das erste zugeordnete Gesicht genommen."""
@@ -146,10 +157,71 @@ class FaceDB:
             person.haupt_face = face_id
             person.save()
     
+
+    
     # -------------------------
-    # SEARCH
+    # IMAGE QUERIES
     # -------------------------
     def get_all_persons_images(self, person_name):
+        """Gibt alle ORIGINAL-Bilder einer Person zurück"""
+        person = Person.get_or_none(Person.name == person_name)
+        if person is None:
+            return []
+        return list(Image
+                    .select()
+                    .join(Face)
+                    .join(FacePerson)
+                    .join(Person)
+                    .where(Person.name == person_name))
+    
+    def get_all_persons_faces(self, person_name):
+        """
+        Gibt alle Faces einer Person zurück.
+        
+        Returns:
+            [
+                {
+                    "image_path": "...",
+                    "bbox": {...},
+                    "face_id": 1
+                }
+            ]
+        """
+        
+        person = Person.get_or_none(Person.name == person_name)
+
+        if person is None:
+            return []
+
+        query = (
+            Face
+            .select(Face, Image)
+            .join(Image)
+            .switch(Face)
+            .join(FacePerson)
+            .join(Person)
+            .where(Person.name == person_name)
+        )
+
+        result = []
+
+        for face in query:
+            result.append({
+                "face_id": face.id,
+                "image_path": face.image.file_name,
+                "bbox": json.loads(face.bbox) if face.bbox else None
+            })
+
+        return result
+        
+
+    
+    def get_all_images(self):
+        """Gibt alle Bilder zurück"""
+        return list(Image.select())
+    
+    def get_person_image_count(self, person_name):
+        """Gibt die Anzahl der Bilder zurück"""
         person = Person.get_or_none(Person.name == person_name)
         if person is None:
             return 0
@@ -158,19 +230,16 @@ class FaceDB:
                 .join(Face)
                 .join(FacePerson)
                 .join(Person)
-                .where(Person.name == person_name))
-
-    def get_all_images(self):
-        return(Image.select())
+                .where(Person.name == person_name)
+                .count())
     
-    def get_person_image_count(self, person_name):
-        #"""Gibt die Anzahl der Bilder zurück, die einer Person zugeordnet sind"""
+    def get_person_face_count(self, person_name):
+        """Gibt die Anzahl der Gesichter einer Person zurück"""
         person = Person.get_or_none(Person.name == person_name)
         if person is None:
             return 0
-        return (Image
+        return (Face
                 .select()
-                .join(Face)
                 .join(FacePerson)
                 .join(Person)
                 .where(Person.name == person_name)
