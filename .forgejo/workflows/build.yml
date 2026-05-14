@@ -33,7 +33,7 @@ jobs:
 
       - name: Binary bauen
         run: |
-          nuitka --standalone Start-Ui.py
+          nuitka Start-Ui.py
 
       - name: Upload
         uses: https://code.forgejo.org/actions/upload-artifact@v4
