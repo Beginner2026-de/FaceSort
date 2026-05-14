@@ -3,19 +3,17 @@ name: Build Python
 on:
   push:
     branches:
-      - master  # 👈 Dein Branch heißt master, nicht main!
-  workflow_dispatch:  # 👈 Für manuelles Starten
+      - master
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: docker  # 👈 Ändere hier auf 'docker' statt 'ubuntu-latest'
-    
-    steps:
-      - uses: actions/checkout@v4
+    runs-on: docker  # Sollte zum Label 'docker:docker://node:20-bookworm' passen
 
-      - name: Python installieren (für Alpine Linux)
-        run: |
-          apk add --no-cache python3 py3-pip
+    steps:
+      - name: Checkout code
+        uses: https://code.forgejo.org/actions/checkout@v4
+
 
       - name: Dependencies installieren
         run: |
@@ -26,7 +24,7 @@ jobs:
           nuitka --standalone Start-Ui.py
 
       - name: Upload
-        uses: actions/upload-artifact@v4
+        uses: https://code.forgejo.org/actions/upload-artifact@v4
         with:
           name: python-build
           path: Start-Ui.dist
