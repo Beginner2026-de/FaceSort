@@ -18,7 +18,15 @@ jobs:
         run: |
           apt-get update
           apt-get install -y python3 python3-pip python3.11-venv
-        
+
+      - name: Cache pip packages
+        uses: https://code.forgejo.org/actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Virtuelle Umgebung erstellen
         run: |
           python3 -m venv venv
@@ -26,10 +34,10 @@ jobs:
           echo "VIRTUAL_ENV=venv" >> $GITHUB_ENV
           echo "$(pwd)/venv/bin" >> $GITHUB_PATH
 
-      - name: Dependencies in venv installieren
+      - name: Dependencies installieren (mit Cache)
         run: |
           source venv/bin/activate
-          pip install -r requirments.txt
+          pip install --cache-dir ~/.cache/pip -r requirements.txt
 
       - name: Binary bauen
         run: |
@@ -39,4 +47,4 @@ jobs:
         uses: https://code.forgejo.org/actions/upload-artifact@v4
         with:
           name: bin
-          path: Start-Ui.dist
+          path: Start-Ui.bin
