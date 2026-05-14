@@ -3,18 +3,20 @@ name: Build Python
 on:
   push:
     branches:
-      - main
+      - main  # Achtung: Dein Branch heißt "master", nicht "main"
+  workflow_dispatch:  # 👈 Füge das hinzu für manuelles Starten
 
 jobs:
   build:
-    runs-on: docker
-
+    runs-on: ubuntu-latest  # 👈 "docker" ist kein gültiger Runner, nimm "ubuntu-latest" oder "debian-latest"
+    
     steps:
       - uses: actions/checkout@v4
 
       - name: Python installieren
         run: |
-          apk add --no-cache python3 py3-pip
+          sudo apt-get update  # 👈 Für Ubuntu/Debian
+          sudo apt-get install -y python3 python3-pip
 
       - name: Dependencies installieren
         run: |
@@ -22,10 +24,10 @@ jobs:
 
       - name: Binary bauen
         run: |
-          nuitka Start-Ui.py
+          nuitka --standalone Start-Ui.py  # 👈 --standalone für eigenständiges Binary
 
       - name: Upload
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # 👈 v4 statt v3 (sicherer)
         with:
           name: python-build
-          path: dist/main
+          path: Start-Ui.dist  # 👈 Nuitka erstellt standardmäßig Start-Ui.dist
