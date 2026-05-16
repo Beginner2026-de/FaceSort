@@ -3,7 +3,7 @@ from tkinter import Widget
 
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QPixmap, QIcon
-from PySide6.QtWidgets import QApplication, QListWidgetItem,QWidget, QListWidget, QVBoxLayout, QPushButton, QListView
+from PySide6.QtWidgets import QApplication, QListWidgetItem,QWidget, QListWidget, QVBoxLayout, QPushButton, QListView,QScrollArea
 from src.DBManager import FaceDB
 from src.custom_logging import setup_logger
 from src.add_picture_to_widget_clas import PersonImageDisplay
@@ -29,19 +29,33 @@ class ButtonUndBilder:
             self.button_layout.addWidget(btn)
         
     def _init_button_widget(self):
-        # 1. Layout einmal setzen (wenn nicht vorhanden)
+        # 1. Hauptlayout für button_widget
         if self.button_widget.layout() is None:
-            self.button_layout = QVBoxLayout()
-            self.button_widget.setLayout(self.button_layout)
+            main_layout = QVBoxLayout()
+            self.button_widget.setLayout(main_layout)
         else:
-            self.button_layout = self.button_widget.layout()
-
-        # 2. Alte Buttons entfernen (nur aus diesem Layout!)
-        while self.button_layout.count():
-            item = self.button_layout.takeAt(0)
-            widget = item.widget()
-            if widget:
-                widget.deleteLater()
+            main_layout = self.button_widget.layout()
+            # Alte Inhalte löschen
+            while main_layout.count():
+                item = main_layout.takeAt(0)
+                widget = item.widget()
+                if widget:
+                    widget.deleteLater()
+        
+        # 2. ScrollArea erstellen
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        
+        # 3. Container Widget für die Buttons
+        container = QWidget()
+        self.button_layout = QVBoxLayout(container)
+        self.button_layout.setAlignment(Qt.AlignmentFlag.AlignTop)  # Oben ausrichten
+        scroll_area.setWidget(container)
+        
+        # 4. ScrollArea zum Hauptlayout hinzufügen
+        main_layout.addWidget(scroll_area)
 
 
     def on_person_clicked(self, name: str):
