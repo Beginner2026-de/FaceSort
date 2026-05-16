@@ -1,7 +1,6 @@
 from peewee import ForeignKeyField
 import numpy as np
 import json
-import os
 from peewee import SqliteDatabase,Model,CharField,BlobField,TextField,IntegerField,FloatField,CompositeKey
 
 # ======================
@@ -156,6 +155,19 @@ class FaceDB:
             "new_name": new_name
         }
 
+    def get_faces_by_person(self, person_name):
+        person = Person.get_or_none(name=person_name)
+        if not person:
+            return []
+        return [fp.face.id for fp in FacePerson.select().where(FacePerson.person == person)]
+
+    def get_face_embedding(self, face_id):
+        face = Face.get_by_id(face_id)
+        if isinstance(face.embedding, bytes):
+            # Direkt von Bytes zu numpy array
+            return np.frombuffer(face.embedding, dtype=np.float32)
+        return face.embedding
+    
     def create_person(self, name):
         person, _ = Person.get_or_create(name=name)
         return person
