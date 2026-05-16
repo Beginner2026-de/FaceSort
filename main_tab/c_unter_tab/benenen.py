@@ -51,7 +51,7 @@ def benenen_personen_name_abschiekcen_button(ui):
     print(anser)
     load_person_buttons(ui=ui)
     if anser["success"] == True:
-        nachrichten_class.info(f"Alter Name ({anser["old_name"]}) wurde zu ({anser["new_name"]}) geändert")
+        nachrichten_class.info(f"Alter Name ({anser['old_name']}) wurde zu ({anser['new_name']}) geändert")
     if anser["success"] == False:
-        nachrichten_class.error(f"{anser["error"]} Alt ({aktueller_button_name}) Neu ({neuer_name})")
+        nachrichten_class.error(f"{anser['error']} Alt ({aktueller_button_name}) Neu ({neuer_name})")
     ui.benenen_personen_name.clear()
