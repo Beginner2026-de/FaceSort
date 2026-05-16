@@ -17,7 +17,6 @@ from src.progressbar_clas import ProgressBar
 from src.nachrichten_clas import Nachrichten
 from src.add_button_and_pcitures_in_two_widgets import ButtonUndBilder
 
-aktueller_button_name:str = ""
 
 def start_personen_bennen(ui):
     load_person_buttons(ui=ui)
@@ -53,5 +52,5 @@ def benenen_personen_name_abschiekcen_button(ui):
     if anser["success"] == True:
         nachrichten_class.info(f"Alter Name ({anser['old_name']}) wurde zu ({anser['new_name']}) geändert")
     if anser["success"] == False:
-        nachrichten_class.error(f"{anser['error']} Alt ({aktueller_button_name}) Neu ({neuer_name})")
+        nachrichten_class.error(f"{anser['error']} Alt ({ui.bennen_aktuelle_person}) Neu ({neuer_name})")
     ui.benenen_personen_name.clear()
