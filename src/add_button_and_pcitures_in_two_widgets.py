@@ -60,12 +60,16 @@ class ButtonUndBilder:
 
     def on_person_clicked(self, name: str):
         self.logger.info(f"Person geklickt: {name}")
-        self.ui.bennen_aktuelle_person = name 
+        self.aktueller_name = name 
         db = self._get_db()
 
         images = db.get_all_persons_faces(person_name=name)
 
         self._load_images(images)
+
+    def get_aktueller_name(self) -> str:
+        """Gibt den zuletzt geklickten Personennamen zurück"""
+        return self.aktueller_name
 
     def _load_images(self, images):
         # alte löschen
