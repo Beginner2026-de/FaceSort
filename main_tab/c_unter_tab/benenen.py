@@ -31,12 +31,12 @@ def load_person_buttons(ui):
         return
     
     bilder_db = FaceDB(db_path=db_path)
-    nameundbilder = ButtonUndBilder(ui=ui, 
+    ui.bennenen_nameundbilder = ButtonUndBilder(ui=ui, 
                                     button_widget=ui.personen_benenen_namen_liste,
                                     bilder_widget=ui.personen_benenen_bilder_anzeige_box,
                                     face_only=True)
     names = bilder_db.get_all_person_names()
-    nameundbilder.add_person_buttons(names=names)
+    ui.bennenen_nameundbilder.add_person_buttons(names=names)
 
 
     
@@ -46,11 +46,12 @@ def benenen_personen_name_abschiekcen_button(ui):
     db = FaceDB(db_path=db_path)
     nachrichten_class = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
     neuer_name:str = ui.benenen_personen_name.text()
-    anser = db.rename_person(old_name=ui.bennen_aktuelle_person,new_name=neuer_name)
+    aktueller_name = ui.bennenen_nameundbilder.get_aktueller_name()
+    anser = db.rename_person(old_name=aktueller_name,new_name=neuer_name)
     print(anser)
     load_person_buttons(ui=ui)
     if anser["success"] == True:
         nachrichten_class.info(f"Alter Name ({anser['old_name']}) wurde zu ({anser['new_name']}) geändert")
     if anser["success"] == False:
-        nachrichten_class.error(f"{anser['error']} Alt ({ui.bennen_aktuelle_person}) Neu ({neuer_name})")
+        nachrichten_class.error(f"{anser['error']} Alt ({aktueller_name}) Neu ({neuer_name})")
     ui.benenen_personen_name.clear()
