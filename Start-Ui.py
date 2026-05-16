@@ -10,6 +10,7 @@ from src.g_db_settings_handler import SettingsHandler
 from src.resource_path import resource_path
 from main_tab.c_unter_tab.start_personen_scan import start_personen_scan, person_nachrichten_handler
 from main_tab.c_unter_tab.benenen import start_personen_bennen, benenen_personen_name_abschiekcen_button
+from main_tab.c_unter_tab.zusammenfuegen import start_personen_zusammenfuegen
 
 loger = setup_logger(__name__)
 
@@ -48,6 +49,8 @@ class MainWindow(QMainWindow):
             loger.info(f"Personen Tab gewechselt zu index: {index}")
             if index == 1:
                 start_personen_bennen(ui)
+            if index == 2:
+                start_personen_zusammenfuegen(ui=ui)
 
         # Einstellungen
             # In den Tab wechseln
