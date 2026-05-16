@@ -97,15 +97,14 @@ def cluster_faces(ui,eps=0.5, min_samples=2):
     
     return clusters
 
-def auto_assign_persons(ui, eps=0.5, min_samples=2):
+def auto_assign_persons(ui, eps=0.5, min_samples=2, similarity_threshold=0.6):
     scan_bild_liste = PersonImageDisplay(ui=ui,list_widget=ui.starte_personen_scan_bild_liste,face_only=True)
     scan_bild_liste.clear()
-    """Automatisch Personen aus Clustern erstellen"""
     folder_path = ui.selected_folder_path.text()
     db_path = f"{folder_path}/db.db"
 
     if not folder_path:
-        person_nachrichten_handler(ui=ui,level="error",text=f"Kein Ordner Gelden")
+        person_nachrichten_handler(ui=ui,level="error",text=f"Kein Ordner Geladen")
 
     bilder_db = FaceDB(db_path=db_path)
     clusters = cluster_faces(ui=ui)
@@ -114,27 +113,56 @@ def auto_assign_persons(ui, eps=0.5, min_samples=2):
         person_nachrichten_handler(ui=ui,text="Keine Cluster gefunden",level="error")
         return
 
-    person_nachrichten_handler(ui=ui,text=f"Alle gesichter werden angelegt: {len(clusters)}")
+    # Bestehende Personen und ihre Embeddings laden
+    existing_persons = {}
+    for person_name in bilder_db.get_all_person_names():  # Diese Methode musst du in FaceDB haben
+        face_ids = bilder_db.get_faces_by_person(person_name)  # Diese Methode musst du in FaceDB haben
+        if face_ids:
+            embeddings = []
+            for face_id in face_ids:
+                embedding = bilder_db.get_face_embedding(face_id)  # Diese Methode musst du in FaceDB haben
+                embeddings.append(embedding)
+            existing_persons[person_name] = {'embeddings': embeddings, 'face_ids': face_ids}
+
     clusterbar3 = ProgressBar(ui=ui,max=len(clusters),list_widget=ui.gefundene_personen_scan_progressBar)
 
-    wert = 1
     for cluster_id, face_ids in clusters.items():
-        # Temporärer Personenname (später vom Benutzer umbenennen)
-        person_name = f"Person_{cluster_id}"
-        person = bilder_db.create_person(name=person_name)
-        
-        # Alle Faces dieser Person zuordnen
+        # Embeddings des neuen Clusters laden
+        new_embeddings = []
         for face_id in face_ids:
-            bilder_db.assign_face_to_person(face_id, person_name, confidence=1.0)
-
-        bilder_db.set_haupt_bild_zu_person(person_name=person_name)
-        bild_der_person = bilder_db.get_person_hauptbild_data(person_name=person_name)
-        print (bild_der_person)
-        scan_bild_liste.show_all_images(file_names=bild_der_person)
-
-        person_nachrichten_handler(ui=ui,text=f"Person '{person_name}' mit {len(face_ids)} Gesichtern erstellt")
+            embedding = bilder_db.get_face_embedding(face_id)
+            new_embeddings.append(embedding)
+        
+        # Nach ähnlicher existierender Person suchen
+        matched_person = None
+        best_similarity = 0
+        
+        for person_name, person_data in existing_persons.items():
+            for existing_emb in person_data['embeddings']:
+                for new_emb in new_embeddings:
+                    sim = np.dot(existing_emb, new_emb) / (np.linalg.norm(existing_emb) * np.linalg.norm(new_emb))
+                    if sim > similarity_threshold and sim > best_similarity:
+                        best_similarity = sim
+                        matched_person = person_name
+        
+        if matched_person:
+            # Zu existierender Person hinzufügen
+            for face_id in face_ids:
+                bilder_db.assign_face_to_person(face_id, matched_person, confidence=best_similarity)
+            bilder_db.set_haupt_bild_zu_person(person_name=matched_person)
+            person_nachrichten_handler(ui=ui,text=f"Zu '{matched_person}' hinzugefügt ({len(face_ids)} Gesichter)")
+        else:
+            # Neue Person anlegen
+            person_name = f"Person_{cluster_id}"
+            for face_id in face_ids:
+                bilder_db.assign_face_to_person(face_id, person_name, confidence=1.0)
+            bilder_db.set_haupt_bild_zu_person(person_name=person_name)
+            # Zu existing_persons hinzufügen
+            existing_persons[person_name] = {'embeddings': new_embeddings, 'face_ids': face_ids}
+            person_nachrichten_handler(ui=ui,text=f"Neue Person '{person_name}' erstellt")
+        
+        haupt_bild = bilder_db.get_person_hauptbild_data(matched_person or person_name)
+        scan_bild_liste.show_all_images(file_names=haupt_bild)
         clusterbar3.update()
-        wert  +=1
+    
     clusterbar3.fertig()
-    person_nachrichten_handler(ui=ui,text=f"Alle Gesichter Gefunden, {len(clusters)} Gefunden und Gespeichert")
-
