@@ -11,6 +11,7 @@ from src.resource_path import resource_path
 from main_tab.c_unter_tab.start_personen_scan import start_personen_scan, person_nachrichten_handler
 from main_tab.c_unter_tab.benenen import start_personen_bennen, benenen_personen_name_abschiekcen_button
 from main_tab.c_unter_tab.zusammenfuegen import start_personen_zusammenfuegen, zusammenfuegen_button_gedrückt
+from main_tab.c_unter_tab.hauptbild_aendern import start_personen_hauptbild, hauptbild_button_gedrückt
 
 loger = setup_logger(__name__)
 
@@ -45,6 +46,8 @@ class MainWindow(QMainWindow):
         self.ui.benenen_personen_name_abschiekcen_button.clicked.connect(lambda: benenen_personen_name_abschiekcen_button(ui=self.ui))
         #Personen zusammenfuegen
         self.ui.zusammenfuegen_button.clicked.connect(lambda: zusammenfuegen_button_gedrückt(ui=self.ui))
+        #Hauptbild ändern
+        self.ui.hauptbild_setzen.clicked.connect(lambda: hauptbild_button_gedrückt(ui=self.ui))
 
 
         def on_chnage_in_person_tab(ui):
@@ -54,6 +57,8 @@ class MainWindow(QMainWindow):
                 start_personen_bennen(ui)
             if index == 2:
                 start_personen_zusammenfuegen(ui=ui)
+            if index == 3:
+                start_personen_hauptbild(ui=ui)
 
         # Einstellungen
             # In den Tab wechseln
