@@ -12,9 +12,12 @@ class PersonImageDisplay:
     Zeigt Bilder einer Person an - entweder Originalbilder oder Gesichtsausschnitte
     """
     def __init__(self, ui, list_widget,face_only:bool= False):
+        self.current_image_item = None  
+        self.current_image_path = None
         self.ui = ui
         self.widget = list_widget
         self.face_only = face_only  # Merkt sich den aktuellen Modus
+        self.widget.itemClicked.connect(self.on_image_clicked)
         self.init_widget()
         
     def init_widget(self):
@@ -23,6 +26,17 @@ class PersonImageDisplay:
         self.widget.setFlow(QListView.Flow.LeftToRight)
         self.widget.setIconSize(QSize(150, 150))
         self.widget.clear()
+
+    def on_image_clicked(self, item):
+        self.current_image_item = item  # Store the clicked item
+        self.current_image_path = item.text()  # Store the display text (file path)
+    
+    def current_image_path(self):
+        if self.current_image_path is None:
+            self.logger.warning("Kein Bild ausgewählt")
+            return
+        """Gibt den Pfad des aktuell ausgewählten Bildes zurück"""
+        return self.current_image_path
     
     def clear(self):
         self.widget.clear()
