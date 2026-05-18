@@ -20,6 +20,7 @@ class ButtonUndBilder:
         self.bilder_widget:QListWidget = bilder_widget
         self.aktueller_name:str = ""
         self.face_only = face_only  # Merkt sich den aktuellen Modus
+        self.bild_anzeige = PersonImageDisplay(ui=self.ui,list_widget=self.bilder_widget,face_only=self.face_only)
         self._init_button_widget()
 
     def add_person_buttons(self, names: list):
@@ -58,28 +59,35 @@ class ButtonUndBilder:
         main_layout.addWidget(scroll_area)
 
 
-    def on_person_clicked(self, name: str):
+    def on_person_clicked(self, name: str,load_all_images:bool=False):
         self.logger.info(f"Person geklickt: {name}")
         self.aktueller_name = name 
         db = self._get_db()
 
         images = db.get_all_persons_faces(person_name=name)
 
-        self._load_images(images)
+        self._load_images(images,load_all_images=load_all_images)
+    
+
 
     def get_aktueller_name(self) -> str:
         """Gibt den zuletzt geklickten Personennamen zurück"""
         return self.aktueller_name
 
-    def _load_images(self, images):
+    def _load_images(self, images,load_all_images):
         # alte löschen
         for i in reversed(range(self.bilder_widget.count())):
             self.bilder_widget.takeItem(i)
 
-        bild_anzeige = PersonImageDisplay(ui=self.ui,list_widget=self.bilder_widget,face_only=self.face_only)
-        bild_anzeige.show_first_n_images(file_names=images)
+        if load_all_images == True:
+            self.bild_anzeige.show_all_images(file_names=images)
+        else:        
+            self.bild_anzeige.show_first_n_images(file_names=images)
 
     def _get_db(self):
         """Holt die Datenbank-Instanz"""
         folder = self.ui.selected_folder_path.text()
         return FaceDB(f"{folder}/db.db")
+    
+    def clear_images(self):
+        self.bild_anzeige.clear()
