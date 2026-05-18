@@ -1,6 +1,3 @@
-from tarfile import NUL
-from tkinter import Widget
-
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtWidgets import QApplication, QListWidgetItem,QWidget, QListWidget, QVBoxLayout, QPushButton, QListView,QScrollArea
@@ -68,7 +65,9 @@ class ButtonUndBilder:
 
         self._load_images(images,load_all_images=load_all_images)
     
-
+    def get_current_image_path(self):
+        """Gibt den Pfad des aktuell ausgewählten Bildes zurück"""
+        return self.bild_anzeige.current_image_path()
 
     def get_aktueller_name(self) -> str:
         """Gibt den zuletzt geklickten Personennamen zurück"""
