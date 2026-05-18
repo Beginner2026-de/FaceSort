@@ -160,9 +160,13 @@ def auto_assign_persons(ui, eps=0.5, min_samples=2, similarity_threshold=0.6):
             # Zu existing_persons hinzufügen
             existing_persons[person_name] = {'embeddings': new_embeddings, 'face_ids': face_ids}
             person_nachrichten_handler(ui=ui,text=f"Neue Person '{person_name}' erstellt")
-        
-        haupt_bild = bilder_db.get_person_hauptbild_data(matched_person or person_name)
-        scan_bild_liste.show_all_images(file_names=haupt_bild)
-        clusterbar3.update()
-    
+            clusterbar3.update()
     clusterbar3.fertig()
+    
+    neue_personen_liste = bilder_db.get_all_person_names()
+    clusterbar4 = ProgressBar(ui=ui,max=len(neue_personen_liste),list_widget=ui.gefundene_personen_scan_progressBar)
+    for person_name in neue_personen_liste:   
+        haupt_bild = bilder_db.get_person_hauptbild_data(person_name)
+        scan_bild_liste.show_all_images(file_names=haupt_bild)
+        clusterbar4.update()
+    clusterbar4.fertig(abschluss_text="Alle Hauptbilder geladen")
