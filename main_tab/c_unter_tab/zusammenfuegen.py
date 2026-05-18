@@ -1,7 +1,7 @@
 import cv2
 from insightface.app import FaceAnalysis
 from src.g_db_settings_handler import SettingsHandler
-from src.custom_logging import setup_logger
+from src.custom_logging import setup_logger, success
 from PySide6.QtCore import Qt,QSize
 from PySide6.QtGui import QPixmap, QImage,QIcon
 from PySide6.QtWidgets import QApplication,QListWidgetItem,QListWidget,QVBoxLayout,QPushButton, QWidget
@@ -31,12 +31,12 @@ def load_person_buttons_left(ui):
         return
     
     bilder_db = FaceDB(db_path=db_path)
-    nameundbilder = ButtonUndBilder(ui=ui, 
+    ui.zusammenfuegen_bilder_und_namen_left = ButtonUndBilder(ui=ui, 
                                     button_widget=ui.zusamnenfegen_person_eins,
                                     bilder_widget=ui.zusamnenfegen_person_eins_bilder,
                                     face_only=True)
     names = bilder_db.get_all_person_names()
-    nameundbilder.add_person_buttons(names=names)
+    ui.zusammenfuegen_bilder_und_namen_left.add_person_buttons(names=names)
 
 def load_person_buttons_right(ui):
     personen_nachrichten = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
@@ -48,9 +48,28 @@ def load_person_buttons_right(ui):
         return
     
     bilder_db = FaceDB(db_path=db_path)
-    nameundbilder = ButtonUndBilder(ui=ui, 
+    ui.zusammenfuegen_bilder_und_namen_right = ButtonUndBilder(ui=ui, 
                                     button_widget=ui.zusamnenfegen_person_zwei,
                                     bilder_widget=ui.zusamnenfegen_person_zwei_bilder,
                                     face_only=True)
     names = bilder_db.get_all_person_names()
-    nameundbilder.add_person_buttons(names=names)
+    ui.zusammenfuegen_bilder_und_namen_right.add_person_buttons(names=names)
+
+def zusammenfuegen_button_gedrückt(ui):
+    personen_nachrichten = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
+    folder_path = ui.selected_folder_path.text()
+    db_path = f"{folder_path}/db.db"
+    
+    if not folder_path:
+        personen_nachrichten.error(text="Kein Ordner gewähl")
+        return
+    
+    bilder_db = FaceDB(db_path=db_path)
+    left_name = ui.zusammenfuegen_bilder_und_namen_left.get_aktueller_name()
+    right_name = ui.zusammenfuegen_bilder_und_namen_right.get_aktueller_name()
+    anser =bilder_db.merge_persons(source_name=left_name,target_name=right_name)
+    start_personen_zusammenfuegen(ui=ui)
+    if anser["success"] == True:
+        personen_nachrichten.info(f"Erfolgreich zusammen gefürt {left_name} und {right_name}")
+    ui.zusammenfuegen_bilder_und_namen_right.clear_images()
+    ui.zusammenfuegen_bilder_und_namen_left.clear_images()
