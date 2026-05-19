@@ -1,3 +1,5 @@
+from sys import exception
+
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtWidgets import QApplication, QListWidgetItem,QWidget, QListWidget, QVBoxLayout, QPushButton, QListView,QScrollArea
@@ -11,14 +13,17 @@ class ButtonUndBilder:
     """
     Zeigt Bilder einer Person an - entweder Originalbilder oder Gesichtsausschnitte
     """
-    def __init__(self, ui, button_widget,bilder_widget,face_only:bool= False):
-        self.ui = ui
+    def __init__(self, ui, button_widget,bilder_widget,hauptbild_widget=None,face_only:bool= False, with_hauptbild_widget:bool= False):
+        self.ui = ui 
         self.button_widget:QWidget = button_widget
         self.bilder_widget:QListWidget = bilder_widget
         self.aktueller_name:str = ""
         self.face_only = face_only  # Merkt sich den aktuellen Modus
         self.bild_anzeige = PersonImageDisplay(ui=self.ui,list_widget=self.bilder_widget,face_only=self.face_only)
         self._init_button_widget()
+        if with_hauptbild_widget == True:
+            self.logger.info("Hauptbild erstellt")
+            self.hauptbild_widget = PersonImageDisplay(ui=self.ui,list_widget=hauptbild_widget,face_only=True)
 
     def add_person_buttons(self, names: list):
         for name in names:
@@ -60,10 +65,22 @@ class ButtonUndBilder:
         self.logger.info(f"Person geklickt: {name}")
         self.aktueller_name = name 
         db = self._get_db()
+        try:
 
-        images = db.get_all_persons_faces(person_name=name)
+            images = db.get_all_persons_faces(person_name=name)
 
-        self._load_images(images,load_all_images=load_all_images)
+            self._load_images(images,load_all_images=load_all_images)
+
+            try:
+                self.set_hauptbild_bild(name=name)
+                self.logger.info("Hauptbild geladen")
+            except:
+                self.logger.info("Kein Hauptbild geladen")
+
+        except Exception as e:
+            self.logger.error(e)
+    
+    
     
     def get_current_image_path(self):
         """Gibt den Pfad des aktuell ausgewählten Bildes zurück"""
@@ -88,5 +105,15 @@ class ButtonUndBilder:
         folder = self.ui.selected_folder_path.text()
         return FaceDB(f"{folder}/db.db")
     
+
+    def set_hauptbild_bild(self,name):
+        try:
+            db = self._get_db()
+            hauptbild = db.get_person_hauptbild_data(person_name=name)
+            self.hauptbild_widget.clear()
+            self.hauptbild_widget.show_all_images(file_names=hauptbild)
+        except Exception as e:
+            self.logger.error(e) 
+
     def clear_images(self):
         self.bild_anzeige.clear()
