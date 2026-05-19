@@ -187,7 +187,7 @@ class FaceDB:
         person = Person.get_or_none(Person.name == person_name)
 
         if not person or not person.haupt_face:
-            return None
+            return []
 
         face = person.haupt_face
 

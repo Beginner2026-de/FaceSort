@@ -41,7 +41,7 @@ class PersonImageDisplay:
     def clear(self):
         self.widget.clear()
     
-    def show_all_images(self, file_names):
+    def show_all_images(self, file_names:list):
 
         # falls einzelnes dict → in liste packen
         if isinstance(file_names, dict):
