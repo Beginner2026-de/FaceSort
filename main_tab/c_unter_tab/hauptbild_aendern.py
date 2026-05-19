@@ -31,9 +31,11 @@ def load_person_buttons(ui):
     
     bilder_db = FaceDB(db_path=db_path)
     ui.hauptbild_alle_button_und_bilder = ButtonUndBilder(ui=ui, 
-                                    button_widget=ui.hauptbild_alle_namen,
-                                    bilder_widget=ui.hauptbild_alle_bilder_der_person,
-                                    face_only=True)
+                                    button_widget=ui.hauptbild_button,
+                                    bilder_widget=ui.hauptbild_alle_personen_bilder,
+                                    face_only=True,
+                                    with_hauptbild_widget=True,
+                                    hauptbild_widget=ui.hauptbild_hauptbild)
     names = bilder_db.get_all_person_names()
     ui.hauptbild_alle_button_und_bilder.add_person_buttons(names=names)
 
