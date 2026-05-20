@@ -193,37 +193,59 @@ class FaceDB:
 
         return self._face_to_dto(face, person_name)
 
-    def set_haupt_bild_zu_person(self, person_name,image_path:str=""):
-    #"""Setzt Hauptbild einer Person. Ohne face_id wird das erste zugeordnete Gesicht genommen."""
-        person = Person.get(Person.name == person_name)
-        
+    def set_haupt_bild_zu_person(self, person_name, image_path: str = ""):
+        """Setzt Hauptbild einer Person. Ohne image_path wird das Gesicht mit der höchsten Confidence gewählt."""
+        person = Person.get_or_none(Person.name == person_name)
+        if person is None:
+            return {
+                "success": False,
+                "error": "Person nicht gefunden"
+            }
+
         if image_path == "":
-            # Erstes zugeordnetes Gesicht nehmen
-            face_person = (FacePerson
-                        .select()
-                        .where(FacePerson.person == person)
-                        .order_by(FacePerson.confidence.desc())
-                        .first())
-            if face_person:
-                face_id = face_person.face.id
-
-        if not image_path == "":
-            face = (
-                Face
+            # Erstes zugeordnetes Gesicht nach höchster Confidence nehmen
+            face_person = (
+                FacePerson
                 .select()
-                .join(Image)
-                .switch(Face)
-                .join(FacePerson)
-                .join(Person)
-                .where(
-                    (Image.file_name == image_path) &
-                    (Person.name == person_name)
-                )
-                .get()
+                .where(FacePerson.person == person)
+                .order_by(FacePerson.confidence.desc())
+                .first()
             )
+            if face_person:
+                person.haupt_face = face_person.face
+                person.save()
+                return {"success": True}
+            return {"success": False, "error": "Keine Gesichter für Person gefunden"}
 
-            person.haupt_face = face.id
-            person.save()
+        face = (
+            Face
+            .select()
+            .join(Image)
+            .switch(Face)
+            .join(FacePerson)
+            .join(Person)
+            .where(
+                (Image.file_name == image_path) &
+                (Person.name == person_name)
+            )
+            .get()
+        )
+
+        person.haupt_face = face
+        person.save()
+        return {"success": True}
+
+    def delete_person_by_name(self, person_name):
+        """Löscht eine Person und alle Zuordnungen, aber nicht die Bilder oder Gesichter"""
+        person = Person.get_or_none(Person.name == person_name)
+        if not person:
+            return {"success": False, "error": "Person nicht gefunden"}
+
+        with self.db.atomic():
+            FacePerson.delete().where(FacePerson.person == person).execute()
+            person.delete_instance()
+
+        return {"success": True}
     
 
     

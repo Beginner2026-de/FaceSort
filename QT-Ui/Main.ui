@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>604</width>
-    <height>467</height>
+    <width>1192</width>
+    <height>727</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -247,7 +247,7 @@
         <item>
          <widget class="QTabWidget" name="personen_tabWidget">
           <property name="currentIndex">
-           <number>3</number>
+           <number>4</number>
           </property>
           <widget class="QWidget" name="a_starte_personen_scan">
            <attribute name="title">
@@ -495,6 +495,25 @@
            <attribute name="title">
             <string>Person löschen</string>
            </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_14">
+            <item>
+             <widget class="QPushButton" name="person_loeschen_button">
+              <property name="text">
+               <string>Person Löschen (aber nicht die Bilder)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <widget class="QWidget" name="person_loeschen_person_buttons" native="true"/>
+              </item>
+              <item>
+               <widget class="QListWidget" name="person_loeschen_bilder"/>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -784,8 +803,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>604</width>
-     <height>22</height>
+     <width>1192</width>
+     <height>20</height>
     </rect>
    </property>
   </widget>
