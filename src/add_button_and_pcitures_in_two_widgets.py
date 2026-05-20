@@ -15,6 +15,7 @@ class ButtonUndBilder:
     """
     def __init__(self, ui, button_widget,bilder_widget,hauptbild_widget=None,face_only:bool= False, with_hauptbild_widget:bool= False):
         self.ui = ui 
+        self.with_hauptbild_widget = with_hauptbild_widget
         self.button_widget:QWidget = button_widget
         self.bilder_widget:QListWidget = bilder_widget
         self.aktueller_name:str = ""
@@ -67,8 +68,9 @@ class ButtonUndBilder:
         db = self._get_db()
         try:
             try:
-                self.set_hauptbild_bild(name=name)
-                self.logger.info("Hauptbild geladen")
+                if self.with_hauptbild_widget == True:
+                    self.set_hauptbild_bild(name=name)
+                    self.logger.info("Hauptbild geladen")
             except:
                 self.logger.info("Kein Hauptbild geladen")
                 
@@ -79,7 +81,7 @@ class ButtonUndBilder:
 
 
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(f"Fehle in on_person_clicked: {e}")
     
     
     
