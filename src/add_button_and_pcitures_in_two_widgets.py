@@ -66,16 +66,17 @@ class ButtonUndBilder:
         self.aktueller_name = name 
         db = self._get_db()
         try:
-
-            images = db.get_all_persons_faces(person_name=name)
-
-            self._load_images(images,load_all_images=load_all_images)
-
             try:
                 self.set_hauptbild_bild(name=name)
                 self.logger.info("Hauptbild geladen")
             except:
                 self.logger.info("Kein Hauptbild geladen")
+                
+            images = db.get_all_persons_faces(person_name=name)
+
+            self._load_images(images,load_all_images=load_all_images)
+
+
 
         except Exception as e:
             self.logger.error(e)
