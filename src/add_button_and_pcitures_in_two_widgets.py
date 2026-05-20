@@ -84,7 +84,7 @@ class ButtonUndBilder:
     
     def get_current_image_path(self):
         """Gibt den Pfad des aktuell ausgewählten Bildes zurück"""
-        return self.bild_anzeige.current_image_path()
+        return self.bild_anzeige.get_current_image_path()
 
     def get_aktueller_name(self) -> str:
         """Gibt den zuletzt geklickten Personennamen zurück"""
