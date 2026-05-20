@@ -56,19 +56,17 @@ def cluster_faces(ui,eps=0.5, min_samples=2):
     person_nachrichten_handler(ui,text=f"Insgesant gefundene Gesichter in allen Fotos: {len(faces)} Starte datei verarbeitung" )
     time.sleep(2)
     
-    if len(faces) < min_samples:
-        person_nachrichten_handler(ui=ui,level="error",text=f"Nicht genug Gesichter zum Clustern ({len(faces)})")
+    if len(faces) == 0:
+        person_nachrichten_handler(ui=ui,level="error",text="Keine Gesichter in der Datenbank gefunden")
         return
     
     # Embeddings in Matrix umwandeln
     embeddings = []
     face_ids = []
-    wert = 1
     for face in faces:
         emb = np.frombuffer(face["embedding"], dtype=np.float32)
         embeddings.append(emb)
         face_ids.append(face["face_id"])
-        wert =+ 1
         clusterbar.update()
     clusterbar.fertig()
     
@@ -80,15 +78,14 @@ def cluster_faces(ui,eps=0.5, min_samples=2):
     person_nachrichten_handler(ui=ui,text="Starte Gesicht zu ordnung")
     clusterbar2 = ProgressBar(ui=ui,max=len(faces),list_widget=ui.gefundene_personen_scan_progressBar)
 
-    wert = 1
     # Cluster zu Personen zuordnen
     clusters = {}
     for face_id, label in zip(face_ids, labels):
-        if label != -1:  # -1 = Rauschen (kein Cluster)
-            if label not in clusters:
-                clusters[label] = []
-            clusters[label].append(face_id)
-        wert +=1
+        if label == -1:  # Einzelgesicht ohne Cluster
+            cluster_key = f"single_{face_id}"
+            clusters[cluster_key] = [face_id]
+        else:
+            clusters.setdefault(label, []).append(face_id)
         clusterbar2.update()
     clusterbar2.fertig()
 
@@ -160,7 +157,7 @@ def auto_assign_persons(ui, eps=0.5, min_samples=2, similarity_threshold=0.6):
             # Zu existing_persons hinzufügen
             existing_persons[person_name] = {'embeddings': new_embeddings, 'face_ids': face_ids}
             person_nachrichten_handler(ui=ui,text=f"Neue Person '{person_name}' erstellt")
-            clusterbar3.update()
+        clusterbar3.update()
     clusterbar3.fertig()
     
     neue_personen_liste = bilder_db.get_all_person_names()

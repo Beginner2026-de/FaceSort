@@ -13,7 +13,7 @@ from main_tab.c_unter_tab.benenen import start_personen_bennen, benenen_personen
 from main_tab.c_unter_tab.zusammenfuegen import start_personen_zusammenfuegen, zusammenfuegen_button_gedrückt
 from main_tab.c_unter_tab.hauptbild_aendern import start_personen_hauptbild, hauptbild_button_gedrückt
 from main_tab.c_unter_tab.personen_loeschen import start_personen_loeschen, loeschen_button_gedrückt
-
+from main_tab.c_unter_tab.export import export_start ,start_personen_export,select_export_destination
 loger = setup_logger(__name__)
 
 
@@ -51,6 +51,14 @@ class MainWindow(QMainWindow):
         self.ui.hauptbild_setzen.clicked.connect(lambda: hauptbild_button_gedrückt(ui=self.ui))
         #Personen löschen
         self.ui.person_loeschen_button.clicked.connect(lambda: loeschen_button_gedrückt(ui=self.ui))
+
+        # Export
+        self.ui.btn_start_export.clicked.connect(lambda: export_start(self.ui))
+        self.ui.btn_select_export_destination.clicked.connect(lambda: select_export_destination(self.ui))
+       
+
+        
+     
 
         def on_chnage_in_person_tab(ui):
             index = ui.personen_tabWidget.currentIndex()
@@ -108,8 +116,10 @@ class MainWindow(QMainWindow):
 
             if index == 2:
                 person_nachrichten_handler(ui=self.ui,display=False)
+            if index == 3:
+                start_personen_export(self.ui)
             # Oder nach Tab-Name
-            if index == 6:
+            if index == 4:
                 folder_path = self.ui.selected_folder_path.text()
                 if not folder_path:
                     make_settings_invisible()
