@@ -31,7 +31,7 @@ class PersonImageDisplay:
         self.current_image_item = item  # Store the clicked item
         self.current_image_path = item.text()  # Store the display text (file path)
     
-    def current_image_path(self):
+    def get_current_image_path(self):
         if self.current_image_path is None:
             self.logger.warning("Kein Bild ausgewählt")
             return
