@@ -193,11 +193,11 @@ class FaceDB:
 
         return self._face_to_dto(face, person_name)
 
-    def set_haupt_bild_zu_person(self, person_name, face_id=None):
+    def set_haupt_bild_zu_person(self, person_name,image_path:str=""):
     #"""Setzt Hauptbild einer Person. Ohne face_id wird das erste zugeordnete Gesicht genommen."""
         person = Person.get(Person.name == person_name)
         
-        if face_id is None:
+        if image_path == "":
             # Erstes zugeordnetes Gesicht nehmen
             face_person = (FacePerson
                         .select()
@@ -206,9 +206,23 @@ class FaceDB:
                         .first())
             if face_person:
                 face_id = face_person.face.id
-        
-        if face_id:
-            person.haupt_face = face_id
+
+        if not image_path == "":
+            face = (
+                Face
+                .select()
+                .join(Image)
+                .switch(Face)
+                .join(FacePerson)
+                .join(Person)
+                .where(
+                    (Image.file_name == image_path) &
+                    (Person.name == person_name)
+                )
+                .get()
+            )
+
+            person.haupt_face = face.id
             person.save()
     
 

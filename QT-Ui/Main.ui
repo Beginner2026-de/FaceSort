@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>557</width>
-    <height>546</height>
+    <width>604</width>
+    <height>467</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,8 +29,8 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QGridLayout" name="gridLayout_3">
-    <item row="0" column="0">
+   <layout class="QVBoxLayout" name="verticalLayout_13">
+    <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -419,49 +419,75 @@
            <attribute name="title">
             <string>Hauptbild auswählen</string>
            </attribute>
-           <layout class="QGridLayout" name="gridLayout_4">
-            <property name="spacing">
-             <number>5</number>
-            </property>
-            <item row="1" column="0">
-             <layout class="QVBoxLayout" name="verticalLayout_6">
+           <layout class="QVBoxLayout" name="verticalLayout_12">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_11">
+              <property name="sizeConstraint">
+               <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+              </property>
               <item>
-               <widget class="QWidget" name="hauptbild_button" native="true">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+               <widget class="QPushButton" name="hauptbild_setzen">
+                <property name="text">
+                 <string>Hauptbild ändern</string>
+                </property>
+                <property name="autoDefault">
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QListWidget" name="hauptbild_hauptbild">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="layoutDirection">
-                 <enum>Qt::LayoutDirection::LeftToRight</enum>
-                </property>
-                <property name="itemAlignment">
-                 <set>Qt::AlignmentFlag::AlignCenter</set>
-                </property>
+               <widget class="QWidget" name="widget_4" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <item>
+                  <layout class="QVBoxLayout" name="verticalLayout_6">
+                   <property name="sizeConstraint">
+                    <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
+                   </property>
+                   <item>
+                    <widget class="QWidget" name="hauptbild_button" native="true">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_4">
+                     <property name="text">
+                      <string>Hauptbild</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignmentFlag::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QListWidget" name="hauptbild_hauptbild">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="layoutDirection">
+                      <enum>Qt::LayoutDirection::LeftToRight</enum>
+                     </property>
+                     <property name="itemAlignment">
+                      <set>Qt::AlignmentFlag::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="QListWidget" name="hauptbild_alle_personen_bilder"/>
+                 </item>
+                </layout>
                </widget>
               </item>
              </layout>
-            </item>
-            <item row="1" column="1">
-             <widget class="QListWidget" name="hauptbild_alle_personen_bilder"/>
-            </item>
-            <item row="0" column="0" colspan="2">
-             <widget class="QPushButton" name="hauptbild_setzen">
-              <property name="text">
-               <string>PushButton</string>
-              </property>
-             </widget>
             </item>
            </layout>
           </widget>
@@ -758,7 +784,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>557</width>
+     <width>604</width>
      <height>22</height>
     </rect>
    </property>
