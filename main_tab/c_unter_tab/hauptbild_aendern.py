@@ -1,5 +1,6 @@
 import cv2
 from insightface.app import FaceAnalysis
+from playhouse.reflection import print_table_sql
 from src.g_db_settings_handler import SettingsHandler
 from src.custom_logging import setup_logger, success
 from PySide6.QtCore import Qt,QSize
@@ -48,18 +49,23 @@ def hauptbild_button_gedrückt(ui):
     if not folder_path:
         personen_nachrichten.error(text="Kein Ordner gewähl")
         return
-    hauptbild_widget = PersonImageDisplay(ui=ui,list_widget=ui.hauptbild_hauptbild_der_person,face_only=True)
+
     bilder_db = FaceDB(db_path=db_path)
+
     name = ui.hauptbild_alle_button_und_bilder.get_aktueller_name()
-    bild_name = ui.hauptbild_alle_button_und_bilder.get_current_image_path()
-    hauptbild_name = bilder_db.get_person_hauptbild_data(person_name=name)
-    print(f"aktueller Name: {name}, aktuelles Bild: {bild_name}, aktuelles Hauptbild: {hauptbild_name}")
-    hauptbild_widget.show_all_images(file_names=hauptbild_name["image_path"])
+    bild_path = ui.hauptbild_alle_button_und_bilder.get_current_image_path()
+
+    
 
     if not name:
         personen_nachrichten.error(text="Keine Person ausgewählt")
         return
-    if not bild_name:
+    if not bild_path:
         personen_nachrichten.error(text="Kein Bild ausgewählt")
         return
-    start_personen_hauptbild(ui=ui)
+    try:
+        bilder_db.set_haupt_bild_zu_person(person_name=name,image_path=bild_path)
+        personen_nachrichten.info("Neues Hauptbild gesetzt")
+    except Exception as e:
+        personen_nachrichten.error(f"Hauptbild setzen fehlgeschalgen {e}")
+    ui.hauptbild_alle_button_und_bilder.set_hauptbild_bild(name)
