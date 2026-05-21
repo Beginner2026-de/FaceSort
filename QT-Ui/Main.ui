@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>580</width>
-    <height>498</height>
+    <width>563</width>
+    <height>607</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,7 +29,7 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_13">
+   <layout class="QVBoxLayout" name="verticalLayout_16">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizePolicy">
@@ -525,26 +525,10 @@
        </attribute>
        <layout class="QVBoxLayout" name="layout_tab6">
         <item>
-         <widget class="QGroupBox" name="groupbox_export_mode">
-          <property name="title">
-           <string>Exportmodus</string>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Persoen die im bild sein sollen:</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_export_mode">
-           <item>
-            <widget class="QRadioButton" name="radio_export_person">
-             <property name="text">
-              <string>Nach Person exportieren</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radio_export_filter">
-             <property name="text">
-              <string>Nach Filter exportieren</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </widget>
         </item>
         <item>
@@ -555,40 +539,275 @@
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="groupbox_person_filter_options">
-          <property name="title">
-           <string>Personenfilter</string>
+         <widget class="QToolBox" name="toolBox">
+          <property name="currentIndex">
+           <number>0</number>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_person_filter_options">
-           <item>
-            <widget class="QRadioButton" name="radio_export_person_only">
-             <property name="text">
-              <string>Nur Fotos mit nur dieser Person</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radio_export_person_with_others">
-             <property name="text">
-              <string>Fotos mit dieser Person und weiteren Personen</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radio_export_person_any">
-             <property name="text">
-              <string>Alle Fotos mit dieser Person (ohne Einschränkung)</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btn_select_filter">
-          <property name="text">
-           <string>Filter wählen...</string>
-          </property>
+          <widget class="QWidget" name="personenfilter">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>531</width>
+             <height>110</height>
+            </rect>
+           </property>
+           <attribute name="icon">
+            <iconset theme="QIcon::ThemeIcon::UserAvailable"/>
+           </attribute>
+           <attribute name="label">
+            <string>Personenfilter</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_13">
+            <property name="spacing">
+             <number>9</number>
+            </property>
+            <property name="bottomMargin">
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QRadioButton" name="export_personen_alle_fotos">
+              <property name="text">
+               <string>Alle fotos </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="export_personen_selfie">
+              <property name="text">
+               <string>Selfie</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <property name="spacing">
+               <number>3</number>
+              </property>
+              <property name="sizeConstraint">
+               <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>6</number>
+              </property>
+              <property name="bottomMargin">
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="export_personen_mit_mehr_personen">
+                <property name="text">
+                 <string>Foto mit noch weiteren Personen</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_13">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>anzahl:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="export_personen_spinbox_anzahl_der_personen"/>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="umgebungfilter">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>531</width>
+             <height>133</height>
+            </rect>
+           </property>
+           <attribute name="label">
+            <string>Umgebungfilter</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="QLabel" name="label_8">
+                <property name="text">
+                 <string>Umgebung: </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="export_umgebung_comboBox_umgebung">
+                <item>
+                 <property name="text">
+                  <string>Bäume</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Himmel</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Sand</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Mehr</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <widget class="QLabel" name="label_7">
+                <property name="text">
+                 <string>Primererfarbton</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="export_umgebung_comboBox_primerfarbton">
+                <item>
+                 <property name="text">
+                  <string>Blau: Himmel,Wasser,See</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Grün: Wald,Wiese</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Gelb: Sand,Strand</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <item>
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Mimik</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="export_umgebung_comboBox_mimik">
+                <item>
+                 <property name="text">
+                  <string>Lächeln</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Sauer</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Traurig</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>Pose</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="export_umgebung_comboBox_pose">
+                <item>
+                 <property name="text">
+                  <string>Umarmen</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>tanzen</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>sitzen</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>stehen</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="datumfilter">
+           <attribute name="label">
+            <string>Datumfilter</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_18"/>
+          </widget>
+          <widget class="QWidget" name="exportstruktur">
+           <attribute name="label">
+            <string>Exportstruktur</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_15">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QComboBox" name="export_umgebung_comboBox_folder_structure">
+              <item>
+               <property name="text">
+                <string>Automatisch</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
         <item>
@@ -616,27 +835,6 @@
             </widget>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_export_structure">
-          <property name="text">
-           <string>Ordnerstruktur:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="combo_folder_structure">
-          <item>
-           <property name="text">
-            <string>Name\Bild</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Alle in einem Ordner</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item>
@@ -728,7 +926,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>580</width>
+     <width>563</width>
      <height>22</height>
     </rect>
    </property>
