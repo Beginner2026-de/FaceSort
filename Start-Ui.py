@@ -1,7 +1,5 @@
 import sys
-import os
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtUiTools import QUiLoader
 from src.custom_logging import setup_logger
 from main_tab.a_ordner_auswählen import start_select_folder, start_show_images_from_folder_in_qlistwidget

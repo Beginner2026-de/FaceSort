@@ -6,3 +6,4 @@ peewee
 pyside6
 nuitka
 numpy
+autoflake

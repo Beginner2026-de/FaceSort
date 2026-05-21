@@ -1,12 +1,6 @@
 from peewee import IntegerField
 from peewee import CharField
-from email.charset import Charset
-import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
-from PySide6.QtCore import QCoreApplication
-from PySide6.QtUiTools import QUiLoader
 from src.custom_logging import setup_logger
-from main_tab.a_ordner_auswählen import start_select_folder
 from peewee import SqliteDatabase, Model
 
 

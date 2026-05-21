@@ -1,7 +1,4 @@
-from PySide6.QtCore import Qt,QSize
-from PySide6.QtGui import QPixmap,QIcon
-from PySide6.QtWidgets import QApplication, QListWidgetItem, QListWidget, QVBoxLayout, QPushButton, QListView, QLineEdit
-from src.DBManager import FaceDB
+from PySide6.QtWidgets import QApplication, QLineEdit
 from src.custom_logging import setup_logger
 
 class Nachrichten():

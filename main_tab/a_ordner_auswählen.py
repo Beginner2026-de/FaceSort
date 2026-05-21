@@ -1,8 +1,5 @@
-from cv2.detail import VoronoiSeamFinder
-from os import replace
-from sre_constants import BIGCHARSET
 from PySide6.QtWidgets import QFileDialog,QListWidgetItem,QApplication
-from PySide6.QtCore import QSize,Qt
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QIcon
 from pathlib import Path
 from src.custom_logging import setup_logger
@@ -69,7 +66,7 @@ def add_db_to_folder(folder_path):
     loger = setup_logger(__name__)
     db_path = f"{folder_path}/db.db"
     try:
-        db = FaceDB(db_path)
+        FaceDB(db_path)
         loger.info(f"DB erstellt oder existiert schon im pfad {db_path}")
 
     except Exception as e:

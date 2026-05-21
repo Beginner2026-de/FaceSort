@@ -1,16 +1,8 @@
-import cv2
-from insightface.app import FaceAnalysis
-from src.g_db_settings_handler import SettingsHandler
 from src.custom_logging import setup_logger
-from PySide6.QtCore import Qt,QSize
-from PySide6.QtGui import QPixmap, QImage,QIcon
-from PySide6.QtWidgets import QApplication,QListWidgetItem,QListWidget,QVBoxLayout,QPushButton, QWidget
-import cv2
+from PySide6.QtWidgets import QApplication
 from src.DBManager import FaceDB
-import os
 import numpy as np
 from sklearn.cluster import DBSCAN
-from scipy.spatial.distance import cosine
 import time
 from src.add_picture_to_widget_clas import PersonImageDisplay
 from src.progressbar_clas import ProgressBar

@@ -7,7 +7,6 @@ from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtWidgets import QApplication
 import cv2
 from src.DBManager import FaceDB
-import os
 from src.progressbar_clas import ProgressBar
 
 loger = setup_logger(__name__)
@@ -76,7 +75,7 @@ def starte_gesicht_erkennung_alle(ui):
         scalier_und_anzeigen_in_objekt(element=ui.label_2,pixmap=modifizierte_pixmap)
 
         loger.info(f"Bild mit {face_ids} Gesichtern erkannt")
-        progress_value = i + 1
+        i + 1
         
         bar.update()
     bar.fertig()

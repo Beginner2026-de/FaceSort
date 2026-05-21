@@ -1,8 +1,6 @@
-from sys import exception
 
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QPixmap, QIcon
-from PySide6.QtWidgets import QApplication, QListWidgetItem,QWidget, QListWidget, QVBoxLayout, QPushButton, QListView,QScrollArea
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QListWidget, QVBoxLayout, QPushButton, QScrollArea
 from src.DBManager import FaceDB
 from src.custom_logging import setup_logger
 from src.add_picture_to_widget_clas import PersonImageDisplay
