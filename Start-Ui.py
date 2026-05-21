@@ -2,6 +2,7 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtUiTools import QUiLoader
 from src.custom_logging import setup_logger
+from PySide6.QtWidgets import QStyleFactory
 from main_tab.a_ordner_auswählen import start_select_folder, start_show_images_from_folder_in_qlistwidget
 from main_tab.b_gesicht_erkennung import starte_gesicht_erkennung_alle
 from src.g_db_settings_handler import SettingsHandler
@@ -139,7 +140,8 @@ class MainWindow(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setStyle("Fusion")
+    app.setStyle(QStyleFactory.create("Fusion"))
+    
     window = MainWindow()
     sys.exit(app.exec())
 
