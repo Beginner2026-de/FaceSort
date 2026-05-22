@@ -1,4 +1,15 @@
+import os
 import sys
+
+# Erzwingt den korrekten Pfad zu den PySide6-Plugins im fertigen Nuitka-Ordner
+base_dist_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.join(base_dist_dir, "shiboken6", "plugins", "platforms")
+
+# Falls das oben nicht klappt, nutzt Nuitka manchmal auch diesen Pfad direkt im Hauptverzeichnis:
+# os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.join(base_dist_dir, "plugins", "platforms")
+
+# Verhindert, dass OpenCV mit eigenen Qt-Dateien dazwischenfunkt
+os.environ["OPENCV_HEADLESS"] = "1"
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtUiTools import QUiLoader
 from src.custom_logging import setup_logger
