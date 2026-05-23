@@ -27,7 +27,7 @@ def run_build():
 
     # 4. Betriebssystem-spezifische Optionen
     if current_os == "windows":
-        nuitka_cmd.append("--windows-disable-console")
+        nuitka_cmd.append("--windows-console-mode=disable")
         
     elif current_os == "linux":
         pass
