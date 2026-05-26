@@ -23,7 +23,7 @@ from main_tab.c_unter_tab.benenen import start_personen_bennen, benenen_personen
 from main_tab.c_unter_tab.zusammenfuegen import start_personen_zusammenfuegen, zusammenfuegen_button_gedrückt
 from main_tab.c_unter_tab.hauptbild_aendern import start_personen_hauptbild, hauptbild_button_gedrückt
 from main_tab.c_unter_tab.personen_loeschen import start_personen_loeschen, loeschen_button_gedrückt
-from main_tab.c_unter_tab.export import export_start ,start_personen_export,select_export_destination
+from main_tab.d_export import export_start ,start_personen_export,select_export_destination
 loger = setup_logger(__name__)
 
 

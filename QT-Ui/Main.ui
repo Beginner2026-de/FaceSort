@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>576</width>
-    <height>637</height>
+    <width>723</width>
+    <height>621</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -556,31 +556,17 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolBox" name="toolBox">
+         <widget class="QTabWidget" name="tabWidget_2">
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
-          <widget class="QWidget" name="personenfilter">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>532</width>
-             <height>102</height>
-            </rect>
-           </property>
-           <attribute name="icon">
-            <iconset theme="QIcon::ThemeIcon::UserAvailable"/>
-           </attribute>
-           <attribute name="label">
+          <widget class="QWidget" name="Personenfilter">
+           <attribute name="title">
             <string>Personenfilter</string>
            </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_13">
+           <layout class="QVBoxLayout" name="verticalLayout_18">
             <property name="spacing">
-             <number>9</number>
-            </property>
-            <property name="bottomMargin">
-             <number>6</number>
+             <number>3</number>
             </property>
             <item>
              <widget class="QRadioButton" name="export_personen_alle_fotos">
@@ -602,7 +588,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_13">
               <property name="spacing">
-               <number>3</number>
+               <number>0</number>
               </property>
               <property name="sizeConstraint">
                <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
@@ -611,13 +597,19 @@
                <number>0</number>
               </property>
               <property name="topMargin">
-               <number>6</number>
+               <number>0</number>
               </property>
               <property name="bottomMargin">
-               <number>6</number>
+               <number>0</number>
               </property>
               <item>
                <widget class="QRadioButton" name="export_personen_mit_mehr_personen">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>Foto mit noch weiteren Personen</string>
                 </property>
@@ -626,7 +618,7 @@
               <item>
                <widget class="QLabel" name="label_13">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -646,59 +638,100 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="umgebungfilter">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>-4</y>
-             <width>532</width>
-             <height>125</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Umgebungfilter</string>
+          <widget class="QWidget" name="Datumfilter">
+           <attribute name="title">
+            <string>Datumfilter</string>
            </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <layout class="QVBoxLayout" name="verticalLayout_19">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
-              <item>
-               <widget class="QLabel" name="label_8">
+             <widget class="QCheckBox" name="checkBox">
+              <property name="text">
+               <string>Benutze Datum Filter</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QGridLayout" name="gridLayout_3">
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_6">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
-                 <string>Umgebung: </string>
+                 <string>Datum von:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
                 </property>
                </widget>
               </item>
-              <item>
-               <widget class="QComboBox" name="export_umgebung_comboBox_umgebung">
-                <item>
-                 <property name="text">
-                  <string>keine</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Bäume</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Himmel</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Sand</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Mehr</string>
-                 </property>
-                </item>
+              <item row="2" column="0">
+               <widget class="QDateEdit" name="export_datum_dateEdit_von">
+                <property name="displayFormat">
+                 <string>dd/mm/yyyy</string>
+                </property>
+                <property name="calendarPopup">
+                 <bool>true</bool>
+                </property>
+                <property name="date">
+                 <date>
+                  <year>2026</year>
+                  <month>1</month>
+                  <day>1</day>
+                 </date>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QDateEdit" name="export_datum_dateEdit_bis">
+                <property name="displayFormat">
+                 <string>dd/mm/yyyy</string>
+                </property>
+                <property name="calendarPopup">
+                 <bool>true</bool>
+                </property>
+                <property name="date">
+                 <date>
+                  <year>2026</year>
+                  <month>1</month>
+                  <day>1</day>
+                 </date>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLabel" name="label_10">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Datum bis:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
                </widget>
               </item>
              </layout>
             </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="Ortfilter">
+           <attribute name="title">
+            <string>Ortfilter</string>
+           </attribute>
+          </widget>
+          <widget class="QWidget" name="Umgebungsfilter">
+           <attribute name="title">
+            <string>Umgebungsfilter</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_20">
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
@@ -728,41 +761,6 @@
                 <item>
                  <property name="text">
                   <string>Gelb: Sand,Strand</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
-              <item>
-               <widget class="QLabel" name="label_9">
-                <property name="text">
-                 <string>Mimik</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="export_umgebung_comboBox_mimik">
-                <item>
-                 <property name="text">
-                  <string>keine</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Lächeln</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Sauer</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Traurig</string>
                  </property>
                 </item>
                </widget>
@@ -809,116 +807,88 @@
               </item>
              </layout>
             </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="datumfilter">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>544</width>
-             <height>89</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Datumfilter</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_17">
             <item>
-             <widget class="QCheckBox" name="checkBox">
-              <property name="text">
-               <string>Benutze Datum Filter</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="QLabel" name="label_8">
+                <property name="text">
+                 <string>Umgebung: </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="export_umgebung_comboBox_umgebung">
+                <item>
+                 <property name="text">
+                  <string>keine</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Bäume</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Himmel</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Sand</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Mehr</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <layout class="QGridLayout" name="gridLayout_3">
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_6">
+             <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <item>
+               <widget class="QLabel" name="label_9">
                 <property name="text">
-                 <string>Datum von:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                 <string>Mimik</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
-               <widget class="QDateEdit" name="export_datum_dateEdit_von">
-                <property name="displayFormat">
-                 <string>dd/mm/yyyy</string>
-                </property>
-                <property name="calendarPopup">
-                 <bool>true</bool>
-                </property>
-                <property name="date">
-                 <date>
-                  <year>2026</year>
-                  <month>1</month>
-                  <day>1</day>
-                 </date>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QDateEdit" name="export_datum_dateEdit_bis">
-                <property name="displayFormat">
-                 <string>dd/mm/yyyy</string>
-                </property>
-                <property name="calendarPopup">
-                 <bool>true</bool>
-                </property>
-                <property name="date">
-                 <date>
-                  <year>2026</year>
-                  <month>1</month>
-                  <day>1</day>
-                 </date>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QLabel" name="label_10">
-                <property name="text">
-                 <string>Datum bis:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignmentFlag::AlignCenter</set>
-                </property>
+              <item>
+               <widget class="QComboBox" name="export_umgebung_comboBox_mimik">
+                <item>
+                 <property name="text">
+                  <string>keine</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Lächeln</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Sauer</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Traurig</string>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="exportstruktur">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>544</width>
-             <height>89</height>
-            </rect>
-           </property>
-           <attribute name="label">
+          <widget class="QWidget" name="Exportstruktur">
+           <attribute name="title">
             <string>Exportstruktur</string>
            </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_15">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
+           <layout class="QVBoxLayout" name="verticalLayout_21">
             <item>
              <widget class="QComboBox" name="export_umgebung_comboBox_folder_structure">
               <item>
@@ -1048,7 +1018,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>576</width>
+     <width>723</width>
      <height>22</height>
     </rect>
    </property>

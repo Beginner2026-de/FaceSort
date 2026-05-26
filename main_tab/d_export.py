@@ -13,14 +13,11 @@ def start_personen_export(ui):
 def select_export_destination(ui):
     folder = QFileDialog.getExistingDirectory(ui, "Export-Zielordner wählen", "")
     if not folder:
-        loger.info("Kein Exportziel gewählt")
+        nachrichten = Nachrichten(ui=ui,widget=ui.exportnachrichten_nachrichten)
+        nachrichten.info("Kein Exportziel gewählt")
         return
     ui.line_export_destination.setText(folder)
 
-
-def select_filter(ui):
-    nachrichten = Nachrichten(ui=ui, widget=ui.personen_nachrichten)
-    nachrichten.info("Filter-Auswahl ist derzeit nur für Personenexport implementiert.")
 
 
 def load_export_persons(ui):
