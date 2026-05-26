@@ -39,8 +39,9 @@ def load_export_persons(ui):
     ui.list_export_persons.addItems(names)
 
 
+    
 def export_start(ui):
-    nachrichten = Nachrichten(ui=ui, widget=ui.personen_nachrichten)
+    nachrichten = Nachrichten(ui=ui, widget=ui.exportnachrichten_nachrichten)
 
     folder_path = ui.selected_folder_path.text().strip()
     export_path = ui.line_export_destination.text().strip()
@@ -52,13 +53,6 @@ def export_start(ui):
         nachrichten.error("Kein Exportziel gewählt.")
         return
 
-    if ui.radio_export_filter.isChecked():
-        nachrichten.error("Filter-Export ist noch nicht implementiert. Bitte wähle Nach Person.")
-        return
-
-    if not ui.radio_export_person.isChecked():
-        nachrichten.error("Bitte wähle einen Exportmodus.")
-        return
 
     selected_persons = [item.text() for item in ui.list_export_persons.selectedItems()]
     if not selected_persons:
@@ -66,6 +60,7 @@ def export_start(ui):
         return
 
     filter_mode = _get_person_filter_mode(ui)
+    nachrichten.info(f"Der ausgewählte personen filter ist: {filter_mode}")
     db_path = f"{folder_path}/db.db"
     bilder_db = FaceDB(db_path=db_path)
 
@@ -79,13 +74,14 @@ def export_start(ui):
 
 
 def _get_person_filter_mode(ui):
-    if ui.radio_export_person_only.isChecked():
-        return "only"
-    if ui.radio_export_person_with_others.isChecked():
-        return "with_others"
-    if ui.radio_export_person_any.isChecked():
-        return "any"
-    return "any"
+    if ui.export_personen_selfie.isChecked():
+        return "selfie"
+    if ui.export_personen_mit_mehr_personen.isChecked():
+        mit_andren_personen_anzahl = ui.export_personen_spinbox_anzahl_der_personen.value()
+        return "with_others",mit_andren_personen_anzahl
+    if ui.export_personen_alle_fotos.isChecked():
+        return "all"
+    return "None"
 
 
 def _collect_images_for_persons(bilder_db: FaceDB, selected_persons, filter_mode):
@@ -109,14 +105,20 @@ def _collect_images_for_persons(bilder_db: FaceDB, selected_persons, filter_mode
 
     ausgewählte_bilder = set()
     for image_path, person_names in image_persons.items():
-        if filter_mode == "any":
+        if filter_mode == "all":
+            loger.info("in collect images 'all' angekommen")
             if person_names & selected_set:
                 ausgewählte_bilder.add(image_path)
-        elif filter_mode == "only":
+        elif filter_mode == "selfie":
+            loger.info("in collect images 'selfie' angekommen")
             if person_names and person_names <= selected_set:
                 ausgewählte_bilder.add(image_path)
-        elif filter_mode == "with_others":
-            if person_names & selected_set and len(person_names - selected_set) > 0:
+        elif  "with_others" in filter_mode:
+            loger.info("in collect images 'with_others' angekommen")
+            anzahl_der_gesichrt_auf_dem_bild = bilder_db.get_faces_by_image(file_name=image_path)
+            loger.info(f"anzahl der gesichter auf dem bild {image_path} : {len(anzahl_der_gesichrt_auf_dem_bild)}")
+            if person_names & selected_set and  (filter_mode[1]+1) - len(anzahl_der_gesichrt_auf_dem_bild) >= 0:
+                loger.info(f"Bild der liste hinzugefügt {image_path}")
                 ausgewählte_bilder.add(image_path)
 
     return sorted(ausgewählte_bilder)
@@ -127,7 +129,7 @@ def _copy_images(folder_path, export_path, bilder_db, images, selected_persons, 
     persons = set(selected_persons)
     root.mkdir(parents=True, exist_ok=True)
 
-    structure = ui.combo_folder_structure.currentText()
+    structure = ui.export_umgebung_comboBox_folder_structure.currentText()
     copied = 0
     folders = set()
 
@@ -144,7 +146,8 @@ def _copy_images(folder_path, export_path, bilder_db, images, selected_persons, 
             shutil.copy2(source, target)
             copied += 1
             folders.add(str(root))
-        else:
+
+        elif structure == "Automatisch":
             # Name\Bild: je ausgewählte Person einen Ordner erzeugen
             image_persons = _image_persons_for_path(bilder_db, image_path)
             relevant_persons = image_persons & persons
