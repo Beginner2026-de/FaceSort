@@ -18,11 +18,24 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12.3"
+          cache: "pip"
+          cache-dependency-path: requirements-windows.txt
+
+      - name: Cache Nuitka
+        uses: actions/cache@v4
+        with:
+          path: |
+            .nuitka-cache
+            C:\Users\runneradmin\AppData\Local\Nuitka
+          key: ${{ runner.os }}-nuitka-${{ hashFiles('requirements-windows.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-nuitka-
 
       - name: Install build tools
         shell: pwsh
         run: |
           choco install innosetup -y --no-progress
+
           python -m pip install --upgrade pip
           python -m pip install -r requirements-windows.txt
           python -m pip install nuitka
