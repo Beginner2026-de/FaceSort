@@ -1,9 +1,12 @@
 # src/custom_logging.py
 import logging
+from logging.handlers import RotatingFileHandler
 import os
 import re
+from datetime import datetime
+from pathlib import Path
 
-
+APP_LOGGER_NAME = "FaceSort"
 # Eigene Log-Level
 LOADING = 24
 SUCCESS = 25
@@ -96,26 +99,58 @@ _TIMESTAMP_SPLIT_RE = re.compile(r'(?=\d{4}-\d{2}-\d{2}\s)')
 # Logger-Setup-Funktion
 #
 def setup_logger(name: str, level: int = logging.INFO) -> logging.Logger:
-    """
-    Erzeuge/konfiguriere einen Logger mit:
-     - ConsoleHandler (farbig)
-     - WebSocketHandler (plain)
-    """
     logger = logging.getLogger(name)
     logger.setLevel(level)
-    # Vermeide doppelte Handler wenn mehrmals setup_logger aufgerufen wird
+
+    # Alte Handler entfernen
     if logger.hasHandlers():
         logger.handlers.clear()
 
-    # Console (mit Farben)
+    #
+    # Konsolen-Handler
+    #
     console_handler = logging.StreamHandler()
     console_handler.setLevel(level)
     console_handler.setFormatter(ColoredFormatter())
-
-    # ✅ WICHTIG: Handler zum Logger hinzufügen!
     logger.addHandler(console_handler)
 
-    # Verhindern, dass Log-Nachrichten noch weiter an root-Logger gehen
+    #
+    # Datei-Handler
+    #
+    log_dir = Path("logs")
+
+    # Suche nur Logdateien dieses Loggers und sortiere nach Änderungszeit
+    log_files = sorted(
+        log_dir.glob(f"{name}-*.log"),
+        key=lambda f: f.stat().st_mtime,
+        reverse=True,
+    )
+
+    # Entferne sehr alte Logdateien: behalte nur die 5 neuesten
+    for old_file in log_files[5:]:
+        try:
+            old_file.unlink()
+        except Exception as e:
+            logger.warning(f"Fehler beim Löschen von {old_file}: {e}")
+
+    # Erzeuge bei jedem Programmstart eine neue Logdatei mit Zeitstempel
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    rotating_log = log_dir / f"{name}-{timestamp}.log"
+
+    # Rotierender Datei-Handler: begrenzt Dateigröße (kein zusätzliches Backup,
+    # weil wir die Anzahl der Dateien manuell auf 5 beschränken)
+    file_handler = RotatingFileHandler(
+        filename=str(rotating_log),
+        maxBytes=5 * 1024 * 1024,  # 5 MB
+        backupCount=0,
+        encoding="utf-8",
+    )
+
+    file_handler.setLevel(level)
+    file_handler.setFormatter(PlainFormatter())
+
+    logger.addHandler(file_handler)
+
     logger.propagate = False
 
     return logger

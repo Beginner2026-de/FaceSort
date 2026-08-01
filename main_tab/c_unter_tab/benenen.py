@@ -1,18 +1,21 @@
+from pathlib import Path
 from src.DBManager import FaceDB
-from src.nachrichten_clas import Nachrichten
 from src.add_button_and_pcitures_in_two_widgets import ButtonUndBilder
+from src.custom_logging import APP_LOGGER_NAME
+import logging
+
+logger = logging.getLogger(APP_LOGGER_NAME)
 
 
 def start_personen_bennen(ui):
     load_person_buttons(ui=ui)
 
 def load_person_buttons(ui):
-    personen_nachrichten = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
     folder_path = ui.selected_folder_path.text()
-    db_path = f"{folder_path}/db.db"
+    db_path = str(Path(folder_path) / "db.db")
     
     if not folder_path:
-        personen_nachrichten.error(text="Kein Ordner gewähl")
+        ui.nachrichten.error(text="Kein Ordner gewählt")
         return
     
     bilder_db = FaceDB(db_path=db_path)
@@ -27,16 +30,15 @@ def load_person_buttons(ui):
     
 def benenen_personen_name_abschiekcen_button(ui):
     folder_path = ui.selected_folder_path.text()
-    db_path = f"{folder_path}/db.db"
+    db_path = str(Path(folder_path) / "db.db")
     db = FaceDB(db_path=db_path)
-    nachrichten_class = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
     neuer_name:str = ui.benenen_personen_name.text()
     aktueller_name = ui.bennenen_nameundbilder.get_aktueller_name()
     anser = db.rename_person(old_name=aktueller_name,new_name=neuer_name)
-    print(anser)
+    logger.debug(f"Rename result: {anser}")
     load_person_buttons(ui=ui)
     if anser["success"] == True:
-        nachrichten_class.info(f"Alter Name ({anser['old_name']}) wurde zu ({anser['new_name']}) geändert")
+        ui.nachrichten.info(f"Alter Name ({anser['old_name']}) wurde zu ({anser['new_name']}) geändert")
     if anser["success"] == False:
-        nachrichten_class.error(f"{anser['error']} Alt ({aktueller_name}) Neu ({neuer_name})")
+        ui.nachrichten.error(f"{anser['error']} Alt ({aktueller_name}) Neu ({neuer_name})")
     ui.benenen_personen_name.clear()

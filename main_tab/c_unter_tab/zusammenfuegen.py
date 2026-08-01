@@ -1,6 +1,6 @@
+from pathlib import Path
 from PySide6.QtWidgets import QWidget
 from src.DBManager import FaceDB
-from src.nachrichten_clas import Nachrichten
 from src.add_button_and_pcitures_in_two_widgets import ButtonUndBilder
 
 def start_personen_zusammenfuegen(ui:QWidget):
@@ -8,12 +8,11 @@ def start_personen_zusammenfuegen(ui:QWidget):
     load_person_buttons_right(ui=ui)
 
 def load_person_buttons_left(ui):
-    personen_nachrichten = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
     folder_path = ui.selected_folder_path.text()
-    db_path = f"{folder_path}/db.db"
+    db_path = str(Path(folder_path) / "db.db")
     
     if not folder_path:
-        personen_nachrichten.error(text="Kein Ordner gewähl")
+        ui.nachrichten.error(text="Kein Ordner gewähl")
         return
     
     bilder_db = FaceDB(db_path=db_path)
@@ -25,12 +24,11 @@ def load_person_buttons_left(ui):
     ui.zusammenfuegen_bilder_und_namen_left.add_person_buttons(names=names)
 
 def load_person_buttons_right(ui):
-    personen_nachrichten = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
     folder_path = ui.selected_folder_path.text()
-    db_path = f"{folder_path}/db.db"
+    db_path = str(Path(folder_path) / "db.db")
     
     if not folder_path:
-        personen_nachrichten.error(text="Kein Ordner gewähl")
+        ui.nachrichten.error(text="Kein Ordner gewähl")
         return
     
     bilder_db = FaceDB(db_path=db_path)
@@ -42,12 +40,11 @@ def load_person_buttons_right(ui):
     ui.zusammenfuegen_bilder_und_namen_right.add_person_buttons(names=names)
 
 def zusammenfuegen_button_gedrückt(ui):
-    personen_nachrichten = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
     folder_path = ui.selected_folder_path.text()
-    db_path = f"{folder_path}/db.db"
+    db_path = str(Path(folder_path) / "db.db")
     
     if not folder_path:
-        personen_nachrichten.error(text="Kein Ordner gewähl")
+        ui.nachrichten.error(text="Kein Ordner gewähl")
         return
     
     bilder_db = FaceDB(db_path=db_path)
@@ -56,6 +53,6 @@ def zusammenfuegen_button_gedrückt(ui):
     anser =bilder_db.merge_persons(source_name=left_name,target_name=right_name)
     start_personen_zusammenfuegen(ui=ui)
     if anser["success"] == True:
-        personen_nachrichten.info(f"Erfolgreich zusammen gefürt {left_name} und {right_name}")
+        ui.nachrichten.info(f"Erfolgreich zusammen gefürt {left_name} und {right_name}")
     ui.zusammenfuegen_bilder_und_namen_right.clear_images()
     ui.zusammenfuegen_bilder_und_namen_left.clear_images()

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>723</width>
-    <height>621</height>
+    <width>724</width>
+    <height>646</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,7 +29,35 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_16">
+   <layout class="QVBoxLayout" name="verticalLayout_13">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <item>
+       <widget class="QPushButton" name="exit_app">
+        <property name="text">
+         <string>App Schließen</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="nachrichten_main">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="lade_neuer_version_herunter">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Lade die Neue Version Herunter</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizePolicy">
@@ -39,14 +67,14 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_images">
        <attribute name="title">
-        <string>Bilder</string>
+        <string>1.Bilder</string>
        </attribute>
-       <layout class="QFormLayout" name="formLayout_3">
-        <item row="0" column="1">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
            <widget class="QLabel" name="selected_folder">
@@ -64,56 +92,41 @@
           </item>
          </layout>
         </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="btn_load_folder">
-          <property name="text">
-           <string>Ordner laden</string>
-          </property>
-         </widget>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <widget class="QPushButton" name="btn_load_folder">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Ordner laden</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="bilder_umbenene">
+            <property name="text">
+             <string>Bild umbennen</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
-        <item row="2" column="1">
+        <item>
          <widget class="QProgressBar" name="ordner_loading_names_to_progressbar">
           <property name="value">
            <number>0</number>
           </property>
          </widget>
         </item>
-        <item row="5" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout"/>
-        </item>
-        <item row="5" column="1">
-         <widget class="QProgressBar" name="ordner_loading_pictures_progressbar">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="value">
-           <number>0</number>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QListWidget" name="ordner_list_bilder">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>2</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>200</width>
-            <height>200</height>
-           </size>
-          </property>
-          <property name="resizeMode">
-           <enum>QListView::ResizeMode::Adjust</enum>
-          </property>
-          <property name="viewMode">
-           <enum>QListView::ViewMode::IconMode</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
+        <item>
          <widget class="QWidget" name="widget" native="true">
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
@@ -148,19 +161,65 @@
           </layout>
          </widget>
         </item>
+        <item>
+         <widget class="QProgressBar" name="ordner_loading_pictures_progressbar">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout"/>
+        </item>
+        <item>
+         <widget class="QListWidget" name="ordner_list_bilder">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>2</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>200</width>
+            <height>200</height>
+           </size>
+          </property>
+          <property name="resizeMode">
+           <enum>QListView::ResizeMode::Adjust</enum>
+          </property>
+          <property name="viewMode">
+           <enum>QListView::ViewMode::IconMode</enum>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_detection">
        <attribute name="title">
-        <string>Erkennung</string>
+        <string>2.Erkennung</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <widget class="QPushButton" name="btn_start_scan">
-          <property name="text">
-           <string>Erkennung starten</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_15">
+          <item>
+           <widget class="QPushButton" name="btn_start_scan">
+            <property name="text">
+             <string>Erkennung starten</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_stop_scan">
+            <property name="text">
+             <string>Erkennung Stoppen</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QProgressBar" name="scan_progressBar"/>
@@ -225,29 +284,13 @@
       </widget>
       <widget class="QWidget" name="tab_persons">
        <attribute name="title">
-        <string>Personen</string>
+        <string>3.Personen</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QLineEdit" name="personen_nachrichten">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Nachricht</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QTabWidget" name="personen_tabWidget">
           <property name="currentIndex">
-           <number>4</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="a_starte_personen_scan">
            <attribute name="title">
@@ -306,6 +349,12 @@
                 <widget class="QPushButton" name="benenen_personen_name_abschiekcen_button">
                  <property name="text">
                   <string>Name Speichern</string>
+                 </property>
+                 <property name="autoDefault">
+                  <bool>false</bool>
+                 </property>
+                 <property name="default">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -521,19 +570,9 @@
       </widget>
       <widget class="QWidget" name="tab_export">
        <attribute name="title">
-        <string>Export</string>
+        <string>4.Export</string>
        </attribute>
-       <layout class="QVBoxLayout" name="layout_tab6">
-        <item>
-         <widget class="QLineEdit" name="exportnachrichten_nachrichten">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
+       <layout class="QVBoxLayout" name="verticalLayout_15">
         <item>
          <widget class="QProgressBar" name="export_progressBar">
           <property name="value">
@@ -542,18 +581,58 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Persoen die im bild sein sollen:</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_12">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Persoen im bild:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_14">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Persoen nicht im bild:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QListWidget" name="list_export_persons">
-          <property name="selectionMode">
-           <enum>QAbstractItemView::SelectionMode::MultiSelection</enum>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_14">
+          <item>
+           <widget class="QListWidget" name="list_export_persons_im_bild">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SelectionMode::MultiSelection</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QListWidget" name="list_export_persons_nicht_im_bild">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SelectionMode::MultiSelection</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QTabWidget" name="tabWidget_2">
@@ -564,9 +643,12 @@
            <attribute name="title">
             <string>Personenfilter</string>
            </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_18">
+           <layout class="QVBoxLayout" name="verticalLayout_18" stretch="0,0,0">
             <property name="spacing">
              <number>3</number>
+            </property>
+            <property name="leftMargin">
+             <number>2</number>
             </property>
             <item>
              <widget class="QRadioButton" name="export_personen_alle_fotos">
@@ -890,7 +972,29 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_21">
             <item>
+             <widget class="QLabel" name="label_12">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Speicherstruktur</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QComboBox" name="export_umgebung_comboBox_folder_structure">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <item>
                <property name="text">
                 <string>Automatisch</string>
@@ -946,7 +1050,7 @@
         </sizepolicy>
        </property>
        <attribute name="title">
-        <string>Einstellungen</string>
+        <string>5.Einstellungen</string>
        </attribute>
        <layout class="QFormLayout" name="formLayout_2">
         <item row="0" column="0">
@@ -1018,7 +1122,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>723</width>
+     <width>724</width>
      <height>22</height>
     </rect>
    </property>

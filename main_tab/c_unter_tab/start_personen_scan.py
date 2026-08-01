@@ -1,4 +1,6 @@
-from src.custom_logging import setup_logger
+from pathlib import Path
+from src.custom_logging import APP_LOGGER_NAME
+import logging
 from PySide6.QtWidgets import QApplication
 from src.DBManager import FaceDB
 import numpy as np
@@ -6,38 +8,21 @@ from sklearn.cluster import DBSCAN
 import time
 from src.add_picture_to_widget_clas import PersonImageDisplay
 from src.progressbar_clas import ProgressBar
-
+from src.nachrichten_clas import Nachrichten
+logger = logging.getLogger(APP_LOGGER_NAME)
 
 def start_personen_scan(ui):
-    person_nachrichten_handler(ui,display=True, text="Scan gestartet")
+    ui.nachrichten.info("Starte Personen Scan...")
     auto_assign_persons(ui=ui)
-
-loger = setup_logger(__name__)
-
-def person_nachrichten_handler(ui ,display:bool=True ,text:str="", level:str= "info"):
-    nachricht = text
-    if not display == False:
-        if level=="info":
-            loger.info(nachricht)
-            ui.personen_nachrichten.setVisible(display)
-            ui.personen_nachrichten.setText(f"Meldung: {text}")
-            return
-        if level=="error":
-            loger.error(nachricht)
-            ui.personen_nachrichten.setVisible(display)
-            ui.personen_nachrichten.setText(f"Error: {text}")
-            return
-    ui.personen_nachrichten.setVisible(display)
-    QApplication.processEvents()
-
 
 def cluster_faces(ui,eps=0.5, min_samples=2):
     
     folder_path = ui.selected_folder_path.text()
-    db_path = f"{folder_path}/db.db"
+    db_path = str(Path(folder_path) / "db.db")
     if not folder_path:
-        person_nachrichten_handler(ui=ui,level="error",text=f"Kein Ordner Gelden")
-    person_nachrichten_handler(ui=ui,display=False)
+        ui.nachrichten.error(text="Kein Ordner gewählt")
+        return
+    ui.nachrichten.info("Lade Gesichter...")
 
     bilder_db = FaceDB(db_path=db_path)
     """Gruppiert ähnliche Gesichter mit DBSCAN"""
@@ -45,11 +30,11 @@ def cluster_faces(ui,eps=0.5, min_samples=2):
     faces = list(bilder_db.get_all_faces())
     clusterbar = ProgressBar(ui=ui,max=len(faces),list_widget=ui.gefundene_personen_scan_progressBar)
 
-    person_nachrichten_handler(ui,text=f"Insgesant gefundene Gesichter in allen Fotos: {len(faces)} Starte datei verarbeitung" )
+    ui.nachrichten.info(f"Insgesant gefundene Gesichter in allen Fotos: {len(faces)} Starte datei verarbeitung" )
     time.sleep(2)
     
     if len(faces) == 0:
-        person_nachrichten_handler(ui=ui,level="error",text="Keine Gesichter in der Datenbank gefunden")
+        ui.nachrichten.error(text="Keine Gesichter in der Datenbank gefunden")
         return
     
     # Embeddings in Matrix umwandeln
@@ -67,7 +52,7 @@ def cluster_faces(ui,eps=0.5, min_samples=2):
     # Clustering
     clustering = DBSCAN(eps=eps, min_samples=min_samples, metric='cosine')
     labels = clustering.fit_predict(embeddings)
-    person_nachrichten_handler(ui=ui,text="Starte Gesicht zu ordnung")
+    ui.nachrichten.info("Starte Gesicht zu ordnung")
     clusterbar2 = ProgressBar(ui=ui,max=len(faces),list_widget=ui.gefundene_personen_scan_progressBar)
 
     # Cluster zu Personen zuordnen
@@ -82,7 +67,7 @@ def cluster_faces(ui,eps=0.5, min_samples=2):
     clusterbar2.fertig()
 
 
-    person_nachrichten_handler(ui,text=f"Gefundene Gesichter: {len(clusters)}")
+    ui.nachrichten.info(f"Gefundene Gesichter: {len(clusters)}")
     
     return clusters
 
@@ -90,16 +75,17 @@ def auto_assign_persons(ui, eps=0.5, min_samples=2, similarity_threshold=0.6):
     scan_bild_liste = PersonImageDisplay(ui=ui,list_widget=ui.starte_personen_scan_bild_liste,face_only=True)
     scan_bild_liste.clear()
     folder_path = ui.selected_folder_path.text()
-    db_path = f"{folder_path}/db.db"
+    db_path = str(Path(folder_path) / "db.db")
 
     if not folder_path:
-        person_nachrichten_handler(ui=ui,level="error",text=f"Kein Ordner Geladen")
+        ui.nachrichten.error(text="Kein Ordner gewählt")
+        return
 
     bilder_db = FaceDB(db_path=db_path)
     clusters = cluster_faces(ui=ui)
     
     if not clusters:
-        person_nachrichten_handler(ui=ui,text="Keine Cluster gefunden",level="error")
+        ui.nachrichten.error(text="Keine Cluster gefunden")
         return
 
     # Bestehende Personen und ihre Embeddings laden
@@ -139,7 +125,7 @@ def auto_assign_persons(ui, eps=0.5, min_samples=2, similarity_threshold=0.6):
             for face_id in face_ids:
                 bilder_db.assign_face_to_person(face_id, matched_person, confidence=best_similarity)
             bilder_db.set_haupt_bild_zu_person(person_name=matched_person)
-            person_nachrichten_handler(ui=ui,text=f"Zu '{matched_person}' hinzugefügt ({len(face_ids)} Gesichter)")
+            ui.nachrichten.info(f"Zu '{matched_person}' hinzugefügt ({len(face_ids)} Gesichter)")
         else:
             # Neue Person anlegen
             person_name = f"Person_{cluster_id}"
@@ -148,7 +134,7 @@ def auto_assign_persons(ui, eps=0.5, min_samples=2, similarity_threshold=0.6):
             bilder_db.set_haupt_bild_zu_person(person_name=person_name)
             # Zu existing_persons hinzufügen
             existing_persons[person_name] = {'embeddings': new_embeddings, 'face_ids': face_ids}
-            person_nachrichten_handler(ui=ui,text=f"Neue Person '{person_name}' erstellt")
+            ui.nachrichten.info(f"Neue Person '{person_name}' erstellt")
         clusterbar3.update()
     clusterbar3.fertig()
     

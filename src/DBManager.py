@@ -1,13 +1,14 @@
-from peewee import ForeignKeyField
+from peewee import ForeignKeyField, fn
 import numpy as np
 import json
-from peewee import SqliteDatabase,Model,CharField,BlobField,TextField,IntegerField,FloatField,CompositeKey
+from peewee import SqliteDatabase,Model,CharField,BlobField,TextField,IntegerField,FloatField,BooleanField,CompositeKey
 
 # ======================
 # 1. TABELLEN DEFINIEREN (VOR DER KLASSE!)
 # ======================
 class Image(Model):
     file_name = CharField(unique=True)
+    scanned = BooleanField(default=False)
     
     class Meta:
         database = None  # Wird später gesetzt
@@ -51,7 +52,22 @@ class FaceDB:
         
         self.db.connect()
         self.db.create_tables([Image, Face, Person, FacePerson])
+        self._ensure_image_scanned_column()
     
+    def _column_exists(self, model, column_name):
+        cursor = self.db.execute_sql(f"PRAGMA table_info({model._meta.table_name})")
+        return any(row[1] == column_name for row in cursor.fetchall())
+
+    def _ensure_image_scanned_column(self):
+        if not self._column_exists(Image, "scanned"):
+            self.db.execute_sql(
+                f"ALTER TABLE {Image._meta.table_name} ADD COLUMN scanned INTEGER DEFAULT 0"
+            )
+
+    def is_image_scanned(self, image_id):
+        image = Image.get_or_none(Image.id == image_id)
+        return bool(image and image.scanned)
+
     # -------------------------
     # IMAGE
     # -------------------------
@@ -66,15 +82,23 @@ class FaceDB:
     # -------------------------
     def add_faces(self, image, faces_list):
         """Speichert mehrere Gesichter zu einem Bild"""
+        image_model = Image.get_by_id(image["image_id"])
+        saved_face_ids = []
         for face_data in faces_list:
-            Face.get_or_create(
-                image=image,
+            face, _ = Face.get_or_create(
+                image=image_model,
                 embedding=face_data['embedding'].tobytes(),
                 bbox=json.dumps(face_data['bbox']),
                 age=face_data.get('age'),
                 gender=face_data.get('gender')
             )
-        return 
+            saved_face_ids.append(face.id)
+
+        if image_model:
+            image_model.scanned = True
+            image_model.save()
+
+        return saved_face_ids
     
     def get_faces_by_image(self, file_name):
         image = Image.get(Image.file_name == file_name)
@@ -247,7 +271,65 @@ class FaceDB:
 
         return {"success": True}
     
+    def get_images_by_persons(
+        self,
+        person_names_included: list[str],
+        person_names_excluded: list[str] = [],
+        max_other_persons: int = 0
+    ) -> list[str]:
 
+        if not person_names_included:
+            return []
+
+        required_count = len(person_names_included)
+
+        # ------------------------------------------------------------------
+        # Bilder finden, die ALLE gewünschten Personen enthalten
+        # ------------------------------------------------------------------
+        query = (
+            Image
+            .select(Image)
+            .join(Face)
+            .join(FacePerson)
+            .join(Person)
+            .where(Person.name.in_(person_names_included))
+            .group_by(Image.id)
+            .having(fn.COUNT(fn.DISTINCT(Person.id)) == required_count)
+        )
+
+        if person_names_excluded:
+            excluded_images = (
+                Image
+                .select(Image.id)
+                .join(Face)
+                .join(FacePerson)
+                .join(Person)
+                .where(Person.name.in_(person_names_excluded))
+            )
+            query = query.where(Image.id.not_in(excluded_images))
+
+        matching_images = []
+
+        # ------------------------------------------------------------------
+        # Prüfen wie viele Personen insgesamt auf dem Bild sind
+        # ------------------------------------------------------------------
+        for image in query:
+            all_persons_query = (
+                Person
+                .select(Person.id)
+                .join(FacePerson)
+                .join(Face)
+                .where(Face.image == image)
+                .distinct()
+            )
+
+            total_persons = all_persons_query.count()
+            other_persons = total_persons - required_count
+
+            if other_persons <= max_other_persons:
+                matching_images.append(image)
+
+        return [img.file_name for img in matching_images]
     
     # -------------------------
     # IMAGE QUERIES
@@ -287,8 +369,18 @@ class FaceDB:
 
     
     def get_all_images(self):
-        """Gibt alle Bilder zurück"""
-        return list(Image.select())
+        """Gibt alle Bilder als DTO zurück"""
+
+        result = []
+
+        for image in Image.select():
+            result.append({
+                "image_id": image.id,
+                "image_path": image.file_name,
+                "bbox" : None
+            })
+
+        return result
     
     def get_person_image_count(self, person_name):
         """Gibt die Anzahl der Bilder zurück"""

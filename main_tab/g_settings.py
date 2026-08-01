@@ -1,10 +1,11 @@
 from peewee import IntegerField
 from peewee import CharField
-from src.custom_logging import setup_logger
+from src.custom_logging import APP_LOGGER_NAME
+import logging
 from peewee import SqliteDatabase, Model
 
 
-loger = setup_logger(__name__)
+logger = logging.getLogger(APP_LOGGER_NAME)
 
 
 
@@ -25,7 +26,7 @@ def start_einstellung_db(db_path):
     db.create_tables([Einstellungen])
 
     mode, threds = Einstellungen.select(Einstellungen.mode,Einstellungen.threds)
-    loger.info(f"Modus: {mode} und threds: {threds} voreingestellt ")
+    logger.info(f"Einstellungen geladen: Modus={mode}, Threads={threds}")
     return mode, threds
 
 

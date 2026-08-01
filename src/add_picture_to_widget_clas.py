@@ -1,19 +1,24 @@
+from types import NoneType
+
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtWidgets import QApplication, QListWidgetItem, QListView
 from src.DBManager import FaceDB
-from src.custom_logging import setup_logger
-import os
+from src.custom_logging import APP_LOGGER_NAME
+import logging
+from src.progressbar_clas import ProgressBar
+from pathlib import Path
 
 class PersonImageDisplay:
 
-    logger = setup_logger(__name__)
+    logger = logging.getLogger(APP_LOGGER_NAME)
     """
     Zeigt Bilder einer Person an - entweder Originalbilder oder Gesichtsausschnitte
     """
-    def __init__(self, ui, list_widget,face_only:bool= False):
+    def __init__(self, ui, list_widget,bar=None,face_only:bool= False):
         self.current_image_item = None  
         self.current_image_path = None
+        self.bar = bar
         self.ui = ui
         self.widget = list_widget
         self.face_only = face_only  # Merkt sich den aktuellen Modus
@@ -42,20 +47,23 @@ class PersonImageDisplay:
         self.widget.clear()
     
     def show_all_images(self, file_names:list):
+        logger = logging.getLogger(APP_LOGGER_NAME)
+        try:
+            # falls einzelnes dict → in liste packen
+            if isinstance(file_names, dict):
+                file_names = [file_names]
 
-        # falls einzelnes dict → in liste packen
-        if isinstance(file_names, dict):
-            file_names = [file_names]
+            for face in file_names:
+                self._add_picture(
+                    file_name=face["image_path"],
+                    bbox=face["bbox"]
+                )
+        except Exception as e:
+            logger.exception("Fehler in show_first_n_images")
 
-        for face in file_names:
-            self._add_picture(
-                file_name=face["image_path"],
-                bbox=face["bbox"]
-            )
-        
     def show_first_n_images(self, file_names: list, n: int = 10):
         """Zeigt die ersten n Bilder an"""
-        logger = setup_logger(__name__)
+        logger = logging.getLogger(APP_LOGGER_NAME)
         try:
             
             for i, file in enumerate(file_names):
@@ -66,22 +74,22 @@ class PersonImageDisplay:
                     bbox=file["bbox"])
                 
         except Exception as e:
-            logger.error(f"Fehler in show_first_n_images: {e}")
+            logger.exception("Fehler in show_first_n_images")
 
     def _get_db(self):
         """Holt die Datenbank-Instanz"""
         folder = self.ui.selected_folder_path.text()
-        return FaceDB(f"{folder}/db.db")
+        return FaceDB(str(Path(folder) / "db.db"))
     
     
     def _add_picture(self, file_name, bbox=None):
         """Fügt ein einzelnes Bild zur Anzeige hinzu"""
-        logger = setup_logger(__name__)
+        logger = logging.getLogger(APP_LOGGER_NAME)
 
         try:
             base_path = self.ui.selected_folder_path.text()
 
-            image_path = os.path.join(base_path, file_name)
+            image_path = str(Path(base_path) / file_name)
 
             pix = QPixmap(image_path)
 
@@ -114,8 +122,11 @@ class PersonImageDisplay:
             item = QListWidgetItem(QIcon(scaled), display_text)
 
             self.widget.addItem(item)
-
+            if  self.bar == NoneType or self.bar == None:
+                pass
+            else:
+                self.bar.update()
             QApplication.processEvents()
 
         except Exception as e:
-            logger.error(f" Fehler in _add_picture: {e} ")
+            logger.exception(f"Fehler in _add_picture für Datei: {file_name}")

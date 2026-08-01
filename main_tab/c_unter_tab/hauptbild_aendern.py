@@ -1,18 +1,17 @@
+from pathlib import Path
 from PySide6.QtWidgets import QWidget
 from src.DBManager import FaceDB
-from src.nachrichten_clas import Nachrichten
 from src.add_button_and_pcitures_in_two_widgets import ButtonUndBilder
 
 def start_personen_hauptbild(ui:QWidget):
     load_person_buttons(ui=ui)
 
 def load_person_buttons(ui):
-    personen_nachrichten = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
     folder_path = ui.selected_folder_path.text()
-    db_path = f"{folder_path}/db.db"
+    db_path = str(Path(folder_path) / "db.db")
     
     if not folder_path:
-        personen_nachrichten.error(text="Kein Ordner gewähl")
+        ui.nachrichten.error(text="Kein Ordner gewählt")
         return
     
     bilder_db = FaceDB(db_path=db_path)
@@ -27,12 +26,11 @@ def load_person_buttons(ui):
 
 
 def hauptbild_button_gedrückt(ui):
-    personen_nachrichten = Nachrichten(ui=ui,widget=ui.personen_nachrichten)
     folder_path = ui.selected_folder_path.text()
-    db_path = f"{folder_path}/db.db"
+    db_path = str(Path(folder_path) / "db.db")
     
     if not folder_path:
-        personen_nachrichten.error(text="Kein Ordner gewähl")
+        ui.nachrichten.error(text="Kein Ordner gewählt")
         return
 
     bilder_db = FaceDB(db_path=db_path)
@@ -43,14 +41,14 @@ def hauptbild_button_gedrückt(ui):
     
 
     if not name:
-        personen_nachrichten.error(text="Keine Person ausgewählt")
+        ui.nachrichten.error(text="Keine Person ausgewählt")
         return
     if not bild_path:
-        personen_nachrichten.error(text="Kein Bild ausgewählt")
+        ui.nachrichten.error(text="Kein Bild ausgewählt")
         return
     try:
         bilder_db.set_haupt_bild_zu_person(person_name=name,image_path=bild_path)
-        personen_nachrichten.info("Neues Hauptbild gesetzt")
+        ui.nachrichten.info("Neues Hauptbild gesetzt")
     except Exception as e:
-        personen_nachrichten.error(f"Hauptbild setzen fehlgeschalgen {e}")
+        ui.nachrichten.error(f"Hauptbild setzen fehlgeschalgen {e}")
     ui.hauptbild_alle_button_und_bilder.set_hauptbild_bild(name)

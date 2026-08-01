@@ -1,7 +1,8 @@
-from peewee import *
-from src.custom_logging import setup_logger
+from peewee import SqliteDatabase,Model,CharField,IntegerField,DoesNotExist
+from src.custom_logging import APP_LOGGER_NAME
+import logging
 
-loger = setup_logger(__name__)
+logger = logging.getLogger(APP_LOGGER_NAME)
 
 class SettingsHandler:
     def __init__(self, db_path):
@@ -40,7 +41,7 @@ class SettingsHandler:
     def db_path(self, value):
         self._setting.db_path = value
         self._setting.save()
-        loger.info(f"db_path = {value}")
+        logger.info(f"db_path = {value}")
     
     @property
     def folder_path(self):
@@ -50,7 +51,7 @@ class SettingsHandler:
     def folder_path(self, value):
         self._setting.folder_path = value
         self._setting.save()
-        loger.info(f"folder_path = {value}")
+        logger.info(f"folder_path = {value}")
     
     @property
     def mode(self):
@@ -60,7 +61,7 @@ class SettingsHandler:
     def mode(self, value):
         self._setting.mode = value
         self._setting.save()
-        loger.info(f"mode = {value}")
+        logger.info(f"mode = {value}")
     
     @property
     def threads(self):
@@ -70,7 +71,7 @@ class SettingsHandler:
     def threads(self, value):
         self._setting.threads = value
         self._setting.save()
-        loger.info(f"threads = {value}")
+        logger.info(f"threads = {value}")
     
     def close(self):
         self.db.close()

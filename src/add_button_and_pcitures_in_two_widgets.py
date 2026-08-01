@@ -2,12 +2,14 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QListWidget, QVBoxLayout, QPushButton, QScrollArea
 from src.DBManager import FaceDB
-from src.custom_logging import setup_logger
+from src.custom_logging import APP_LOGGER_NAME
+import logging
+from pathlib import Path
 from src.add_picture_to_widget_clas import PersonImageDisplay
 
 class ButtonUndBilder:
 
-    logger = setup_logger(__name__)
+    logger = logging.getLogger(APP_LOGGER_NAME)
     """
     Zeigt Bilder einer Person an - entweder Originalbilder oder Gesichtsausschnitte
     """
@@ -69,8 +71,8 @@ class ButtonUndBilder:
                 if self.with_hauptbild_widget == True:
                     self.set_hauptbild_bild(name=name)
                     self.logger.info("Hauptbild geladen")
-            except:
-                self.logger.info("Kein Hauptbild geladen")
+            except Exception as e:
+                self.logger.warning(f"Kein Hauptbild geladen: {e}")
                 
             images = db.get_all_persons_faces(person_name=name)
 
@@ -79,7 +81,7 @@ class ButtonUndBilder:
 
 
         except Exception as e:
-            self.logger.error(f"Fehle in on_person_clicked: {e}")
+            self.logger.exception(f"Fehler in on_person_clicked für Person: {name}")
     
     
     
@@ -104,17 +106,19 @@ class ButtonUndBilder:
     def _get_db(self):
         """Holt die Datenbank-Instanz"""
         folder = self.ui.selected_folder_path.text()
-        return FaceDB(f"{folder}/db.db")
+        return FaceDB(str(Path(folder) / "db.db"))
     
 
     def set_hauptbild_bild(self,name):
         try:
+            if not self.with_hauptbild_widget:
+                return
             db = self._get_db()
             hauptbild = db.get_person_hauptbild_data(person_name=name)
             self.hauptbild_widget.clear()
             self.hauptbild_widget.show_all_images(file_names=hauptbild)
         except Exception as e:
-            self.logger.error(e) 
+            self.logger.exception(f"Fehler beim Setzen des Hauptbildes für {name}") 
 
     def clear_images(self):
         self.bild_anzeige.clear()
