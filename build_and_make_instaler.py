@@ -5,7 +5,7 @@ import subprocess
 import shutil
 import multiprocessing
 from src.custom_logging import setup_logger, APP_LOGGER_NAME , logging
-from src.version import get_version
+from src.version import get_version_from_env
 from pathlib import Path
 
 RUNWITH_NOFOLLOW = False   # Setze auf False, um alle Module zu bauen (ohne nofollow)
@@ -28,7 +28,7 @@ def run_build():
     # 2. Pfade definieren
     base_dir = os.path.dirname(os.path.abspath(__file__))
     main_script = os.path.join(base_dir, "FaceSort.py") 
-    version = get_version()
+    version = get_version_from_env()
     output_dir = os.path.join(base_dir, "dist", current_os, version)
     ui_dir_source = os.path.join(base_dir, "QT-Ui")
     cache_dir = os.path.join(base_dir, ".nuitka-cache")
@@ -146,7 +146,7 @@ Categories=Utility;
     logger.info("Generiere finale .AppImage Datei")
     try:
         # Setzt voraus, dass 'appimagetool' auf deinem Linux installiert ist
-        out_appimage = os.path.join(base_dir, "dist", f"FaceSort-{get_version()}-x86_64.AppImage")
+        out_appimage = os.path.join(base_dir, "dist", f"FaceSort-{get_version_from_env()}-x86_64.AppImage")
         subprocess.run(["appimagetool", appdir, out_appimage], check=True)
         logger.info(f"Erfolg: Linux AppImage erstellt: {out_appimage}")
     except FileNotFoundError:
@@ -162,7 +162,7 @@ def build_windows_setup(base_dir, dist_dir):
         return
 
     # Erstelle das Inno Setup Skript (.iss) dynamisch
-    version = get_version()
+    version =   get_version_from_env()
 
     iss_content = f"""
 [Setup]
@@ -213,7 +213,7 @@ Filename: "{{app}}\\FaceSort.exe"; Description: "Launch FaceSort"; Flags: nowait
 def start_make_instaler():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     current_os = platform.system().lower()
-    version = get_version()
+    version =   get_version_from_env()
     dist_dir = os.path.join(base_dir, "dist", current_os, version)
 
     if current_os == "linux":
