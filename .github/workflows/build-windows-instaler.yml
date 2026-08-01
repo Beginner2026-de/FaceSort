@@ -39,7 +39,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements-windows.txt
           python -m pip install nuitka
-
+      - name: Prepare Nuitka
+        shell: pwsh
+        run: |
+          echo "NUITKA_ASSUME_YES_FOR_DOWNLOADS=1" >> $env:GITHUB_ENV
+          
       - name: Build Windows installer
         shell: pwsh
         run: |
