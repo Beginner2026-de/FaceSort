@@ -1,0 +1,39 @@
+name: Build Windows Installer
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: https://code.github.org/actions/checkout@v4
+
+      - name: Setup Python
+        uses: https://code.github.org/actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+
+      - name: Install build tools
+        shell: pwsh
+        run: |
+          choco install innosetup -y --no-progress
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install nuitka
+
+      - name: Build Windows installer
+        shell: pwsh
+        run: |
+          python build_and_make_instaler.py
+
+      - name: Upload installer artifact
+        uses: https://code.github.org/actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: dist/FaceSort-Setup-*.exe
