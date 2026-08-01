@@ -6,6 +6,7 @@ peewee
 pyside6
 nuitka
 numpy
+patchelf==0.17.2.4
 scikit-learn
 lxml
 requests

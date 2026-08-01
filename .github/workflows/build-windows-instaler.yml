@@ -24,7 +24,7 @@ jobs:
         run: |
           choco install innosetup -y --no-progress
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
+          python -m pip install -r requirements-windows.txt
           python -m pip install nuitka
 
       - name: Build Windows installer
