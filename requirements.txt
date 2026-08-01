@@ -9,3 +9,4 @@ numpy
 scikit-learn
 lxml
 requests
+patchelf==0.17.2.4
