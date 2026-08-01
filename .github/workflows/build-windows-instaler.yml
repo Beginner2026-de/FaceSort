@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: https://code.github.org/actions/checkout@v4
+        uses: https://github.com/Beginner2026-de/FaceSort.git/actions/checkout@v4
 
       - name: Setup Python
-        uses: https://code.github.org/actions/setup-python@v5
+        uses: https://github.com/Beginner2026-de/FaceSort.git/actions/setup-python@v5
         with:
           python-version: '3.12.3'
 
@@ -33,7 +33,7 @@ jobs:
           python build_and_make_instaler.py
 
       - name: Upload installer artifact
-        uses: https://code.github.org/actions/upload-artifact@v4
+        uses: https://github.com/Beginner2026-de/FaceSort.git/actions/upload-artifact@v4
         with:
           name: windows-installer
           path: dist/FaceSort-Setup-*.exe
