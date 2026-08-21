@@ -21,12 +21,17 @@ jobs:
           cache: "pip"
           cache-dependency-path: requirements-windows.txt
 
+      - name: Prepare Nuitka cache
+        shell: pwsh
+        run: |
+          $cacheDir = "$env:GITHUB_WORKSPACE\.nuitka-cache-windows"
+          New-Item -ItemType Directory -Force -Path $cacheDir | Out-Null
+          "NUITKA_CACHE_DIR=$cacheDir" >> $env:GITHUB_ENV
+
       - name: Cache Nuitka
         uses: actions/cache@v4
         with:
-          path: |
-            .nuitka-cache
-            C:\Users\runneradmin\AppData\Local\Nuitka
+          path: .nuitka-cache-windows
           key: ${{ runner.os }}-nuitka-${{ hashFiles('requirements-windows.txt') }}
           restore-keys: |
             ${{ runner.os }}-nuitka-
@@ -47,7 +52,7 @@ jobs:
       - name: Build Windows installer
         shell: pwsh
         run: |
-          python build_and_make_instaler.py
+          yes | python build_and_make_instaler.py
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
