@@ -27,7 +27,7 @@ def run_build():
 
     # 2. Pfade definieren
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    main_script = os.path.join(base_dir, "FaceSort.py") 
+    main_script = os.path.join(base_dir, "test-actions_file.py") 
     version = get_version_from_env()
     output_dir = os.path.join(base_dir, "dist", current_os, version)
     ui_dir_source = os.path.join(base_dir, "QT-Ui")

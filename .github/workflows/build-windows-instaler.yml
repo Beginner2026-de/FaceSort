@@ -6,13 +6,35 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
+
   build:
     runs-on: windows-latest
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Read project version
+        id: version
+        shell: pwsh
+        run: |
+          $version = (Get-Content project.env | Select-String '^VERSION=').ToString().Split('=', 2)[1].Trim()
+
+          if (-not $version) {
+            Write-Error "VERSION wurde nicht in project.env gefunden!"
+            exit 1
+          }
+
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+          Write-Host "Project version: $version"
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -62,3 +84,27 @@ jobs:
         with:
           name: windows-installer
           path: dist/FaceSort-Setup-*.exe
+
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Windows installer
+        uses: actions/download-artifact@v5
+        with:
+          name: windows-installer
+          path: release
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          echo "Creating release $VERSION"
+
+          gh release create "$VERSION" \
+            release/FaceSort-Setup-*.exe \
+            --title "FaceSort $VERSION" \
+            --generate-notes
