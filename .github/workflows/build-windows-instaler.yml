@@ -26,9 +26,12 @@ jobs:
         run: |
           $cacheDir = "$env:GITHUB_WORKSPACE\.nuitka-cache-windows"
           New-Item -ItemType Directory -Force -Path $cacheDir | Out-Null
+
           "NUITKA_CACHE_DIR=$cacheDir" >> $env:GITHUB_ENV
+          "NUITKA_ASSUME_YES_FOR_DOWNLOADS=1" >> $env:GITHUB_ENV
 
       - name: Cache Nuitka
+        id: cache-nuitka
         uses: actions/cache@v4
         with:
           path: .nuitka-cache-windows
@@ -44,15 +47,16 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements-windows.txt
           python -m pip install nuitka
-      - name: Prepare Nuitka
+
+      - name: Show cache status
         shell: pwsh
         run: |
-          echo "NUITKA_ASSUME_YES_FOR_DOWNLOADS=1" >> $env:GITHUB_ENV
-          
+          Write-Host "Nuitka cache hit: ${{ steps.cache-nuitka.outputs.cache-hit }}"
+
       - name: Build Windows installer
         shell: pwsh
         run: |
-          yes | python build_and_make_instaler.py
+          python build_and_make_instaler.py
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
