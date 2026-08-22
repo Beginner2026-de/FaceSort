@@ -47,6 +47,7 @@ def run_build():
         f"--include-package-data=insightface",
         f"--include-package=skimage",
         f"--include-package-data=skimage",
+        f"--assume-yes-for-downloads",
         main_script
     ]
 
