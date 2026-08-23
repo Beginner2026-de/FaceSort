@@ -38,33 +38,33 @@ def run_build():
     nuitka_cmd = [
         sys.executable, "-m", "nuitka",
         "--standalone",            
-        #"--enable-plugin=pyside6",
+        "--enable-plugin=pyside6",
         f"--output-dir={output_dir}",
-        #f"--include-data-dir={ui_dir_source}=QT-Ui", # Kopiert den UI-Ordner in das Paket
-        #f"--include-data-file=project.env=project.env",
-        #f"--include-package=cv2",
-        #f"--include-package=insightface",
-        #f"--include-package-data=insightface",
-        #f"--include-package=skimage",
-        #f"--include-package-data=skimage",
+        f"--include-data-dir={ui_dir_source}=QT-Ui", # Kopiert den UI-Ordner in das Paket
+        f"--include-data-file=project.env=project.env",
+        f"--include-package=cv2",
+        f"--include-package=insightface",
+        f"--include-package-data=insightface",
+        f"--include-package=skimage",
+        f"--include-package-data=skimage",
         f"--assume-yes-for-downloads",
         main_script
     ]
 
     # 4. Betriebssystem-spezifische Optionen
-    #if current_os == "windows":
-    #    nuitka_cmd.append("--windows-console-mode=disable")
-    #    nuitka_cmd.append("--include-windows-runtime-dlls=auto")
-    #    nuitka_cmd.append(f"--jobs={multiprocessing.cpu_count()}")
-    #    nuitka_cmd.append("--noinclude-pytest-mode=nofollow")
-    #    nuitka_cmd.append("--noinclude-setuptools-mode=nofollow")
-    #    nuitka_cmd.append("--nofollow-import-to=tkinter")
-    #    nuitka_cmd.append("--nofollow-import-to=unittest")
-    #    nuitka_cmd.append("--nofollow-import-to=test")
-    #    nuitka_cmd.append("--noinclude-default-mode=error")
-    #
-    #elif current_os == "linux":
-    #    nuitka_cmd.append(f"--jobs={multiprocessing.cpu_count()}")
+    if current_os == "windows":
+        nuitka_cmd.append("--windows-console-mode=disable")
+        nuitka_cmd.append("--include-windows-runtime-dlls=auto")
+        nuitka_cmd.append(f"--jobs={multiprocessing.cpu_count()}")
+        nuitka_cmd.append("--noinclude-pytest-mode=nofollow")
+        nuitka_cmd.append("--noinclude-setuptools-mode=nofollow")
+        nuitka_cmd.append("--nofollow-import-to=tkinter")
+        nuitka_cmd.append("--nofollow-import-to=unittest")
+        nuitka_cmd.append("--nofollow-import-to=test")
+        nuitka_cmd.append("--noinclude-default-mode=error")
+    
+    elif current_os == "linux":
+        nuitka_cmd.append(f"--jobs={multiprocessing.cpu_count()}")
         
     
     if RUNWITH_NOFOLLOW:
