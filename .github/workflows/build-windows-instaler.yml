@@ -85,8 +85,7 @@ jobs:
           name: windows-installer
           path: dist/FaceSort-Setup-*.exe
 
-
-   release:
+  release:
     needs: build
     runs-on: ubuntu-latest
 
