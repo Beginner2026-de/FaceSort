@@ -128,15 +128,15 @@ jobs:
 
           appimagetool --help
 
-            - name: Build FaceSort
-              run: |
-                python build_and_make_instaler.py
+      - name: Build FaceSort
+        run: |
+          python build_and_make_instaler.py
 
-            - name: Upload Linux artifact
-              uses: actions/upload-artifact@v4
-              with:
-                name: FaceSort-Linux
-                path: dist/FaceSort-*.AppImage
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FaceSort-Linux
+          path: dist/FaceSort-*.AppImage
 
   release:
     needs:
