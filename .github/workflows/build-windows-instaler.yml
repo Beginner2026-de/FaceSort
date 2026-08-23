@@ -119,18 +119,24 @@ jobs:
 
       - name: Install AppImage tools
         run: |
-          # appimagetool installieren
-          ...
+          wget -O appimagetool \
+            https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
 
-      - name: Build FaceSort
-        run: |
-          python build_and_make_instaler.py
+          chmod +x appimagetool
 
-      - name: Upload Linux artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: FaceSort-Linux
-          path: dist/FaceSort-*.AppImage
+          sudo mv appimagetool /usr/local/bin/appimagetool
+
+          appimagetool --help
+
+            - name: Build FaceSort
+              run: |
+                python build_and_make_instaler.py
+
+            - name: Upload Linux artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: FaceSort-Linux
+                path: dist/FaceSort-*.AppImage
 
   release:
     needs:
