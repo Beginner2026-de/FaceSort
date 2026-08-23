@@ -11,7 +11,7 @@ permissions:
 
 jobs:
 
-  build:
+  build-windows-installer:
     runs-on: windows-latest
 
     outputs:
@@ -85,8 +85,58 @@ jobs:
           name: windows-installer
           path: dist/FaceSort-Setup-*.exe
 
+  build-linux-appimage:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Read project version
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(grep '^VERSION=' project.env | cut -d '=' -f2-)
+
+          if [ -z "$VERSION" ]; then
+            echo "VERSION wurde nicht in project.env gefunden!"
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Version: $VERSION"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-linux.txt
+          python -m pip install nuitka
+
+      - name: Install AppImage tools
+        run: |
+          # appimagetool installieren
+          ...
+
+      - name: Build FaceSort
+        run: |
+          python build_and_make_instaler.py
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FaceSort-Linux
+          path: dist/FaceSort-*.AppImage
+
   release:
-    needs: build
+    needs:
+      - build-windows-installer
+      - build-linux-appimage
+
     runs-on: ubuntu-latest
 
     steps:
@@ -99,15 +149,27 @@ jobs:
           name: windows-installer
           path: release
 
+      - name: Download Linux AppImage
+        uses: actions/download-artifact@v5
+        with:
+          name: linux-appimage
+          path: release
+
+      - name: Show release files
+        run: |
+          echo "Files that will be uploaded:"
+          ls -lah release
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ needs.build.outputs.version }}
+          VERSION: ${{ needs.build-windows-installer.outputs.version }}
         run: |
           echo "Creating release $VERSION"
 
           gh release create "$VERSION" \
             release/FaceSort-Setup-*.exe \
+            release/FaceSort-*.AppImage \
             --repo "${{ github.repository }}" \
             --title "FaceSort $VERSION" \
             --generate-notes

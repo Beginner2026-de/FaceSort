@@ -117,7 +117,8 @@ Name=FaceSort
 Exec=FaceSort.bin
 Icon=photo_icon
 Type=Application
-Categories=Utility;
+Categories=Utility;Graphics;
+Terminal=false
 """
     with open(os.path.join(appdir, "Photo-Face-sort.desktop"), "w") as f:
         f.write(desktop_content)
